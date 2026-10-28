@@ -1,0 +1,26 @@
+name: Sync Letterboxd
+
+on:
+  schedule:
+    - cron: "0 9 * * *"   # todos los días, 06:00 hora de Chile/Argentina aprox.
+  workflow_dispatch:       # botón "Run workflow" para sincronizar a mano
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python sync_letterboxd.py fmillag
+      - name: Commit si hubo cambios
+        run: |
+          git config user.name "sala-propia-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sync-data.js
+          git diff --cached --quiet || git commit -m "Sync Letterboxd $(date -u +%F)"
+          git push

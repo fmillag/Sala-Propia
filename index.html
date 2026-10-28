@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sala Propia</title>
+<meta name="description" content="Tu perfil cinéfilo y recomendaciones a partir de Letterboxd.">
+<meta name="theme-color" content="#171310">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sala Propia">
+<script src="sync-data.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #171310;
+    --bg-2: #201A15;
+    --bg-3: #2A221B;
+    --line: rgba(242,233,220,0.14);
+    --line-strong: rgba(242,233,220,0.28);
+    --text: #F2E9DC;
+    --text-dim: #B7A794;
+    --text-faint: #8B7C6B;
+    --gold: #CB9A44;
+    --gold-soft: rgba(203,154,68,0.16);
+    --crimson: #9A3040;
+    --btn-text: #1A1410;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Source Serif 4", Georgia, serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  .display{
+    font-family:"Bebas Neue", "Source Serif 4", Georgia, serif;
+    letter-spacing:0.03em;
+    font-weight:400;
+  }
+  a{color:var(--gold);}
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:28px 20px 80px;
+  }
+
+  header.top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  header.top h1{
+    font-size:clamp(34px, 6vw, 46px);
+    margin:0;
+    color:var(--text);
+  }
+  header.top h1 span{color:var(--gold);}
+  header.top p.tag{
+    margin:0;
+    color:var(--text-faint);
+    font-size:14px;
+    font-style:italic;
+    max-width:280px;
+  }
+
+  nav.tabs{
+    overflow-x:auto; white-space:nowrap;
+    display:flex;
+    gap:2px;
+    margin-top:22px;
+    border-bottom:1px solid var(--line);
+  }
+  nav.tabs button{
+    font-family:"Bebas Neue", serif;
+    font-size:20px;
+    letter-spacing:0.04em;
+    background:none;
+    border:none;
+    color:var(--text-faint);
+    padding:12px 18px 14px;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+  }
+  nav.tabs button.active{
+    color:var(--gold);
+    border-bottom:2px solid var(--gold);
+  }
+  nav.tabs button:hover{color:var(--text);}
+
+  section.panel{display:none; padding-top:30px;}
+  section.panel.active{display:block;}
+
+  /* ---------- Profile tab ---------- */
+  .hero-stats{
+    display:flex;
+    gap:36px;
+    flex-wrap:wrap;
+    padding:6px 0 34px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:34px;
+  }
+  .hero-stat .num{
+    font-family:"Bebas Neue", serif;
+    font-size:44px;
+    color:var(--gold);
+    line-height:1;
+  }
+  .hero-stat .lbl{
+    font-size:13px;
+    color:var(--text-faint);
+    margin-top:4px;
+    max-width:170px;
+  }
+
+  h2.section-title{
+    font-family:"Bebas Neue", serif;
+    font-size:26px;
+    letter-spacing:0.03em;
+    color:var(--text);
+    margin:0 0 4px;
+  }
+  p.section-sub{
+    color:var(--text-faint);
+    font-size:14px;
+    margin:0 0 16px;
+  }
+  .stat-block{margin-bottom:40px;}
+
+  .bar-row{
+    display:grid;
+    grid-template-columns:140px 1fr 40px;
+    align-items:center;
+    gap:12px;
+    padding:7px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .bar-row .lbl{
+    font-size:15px;
+    color:var(--text);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .bar-row .bar-track{
+    height:9px;
+    background:var(--bg-3);
+    position:relative;
+    border-radius:1px;
+  }
+  .bar-row .bar-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--crimson), var(--gold));
+  }
+  .bar-row .val{
+    font-size:13px;
+    color:var(--text-faint);
+    text-align:right;
+  }
+
+  .chip-list{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    border:1px solid var(--line-strong);
+    padding:6px 12px;
+    font-size:14px;
+    color:var(--text-dim);
+    border-radius:2px;
+  }
+  .chip b{color:var(--gold); font-weight:600;}
+
+  .sync-note{font-size:13px; color:var(--text-faint); margin:10px 0 0;}
+  .insight{
+    font-size:15px;
+    color:var(--text-dim);
+    border-left:2px solid var(--gold);
+    padding:2px 0 2px 14px;
+    margin:0 0 30px;
+  }
+
+  /* ---------- Recommend tab ---------- */
+  .search-row{
+    display:flex;
+    gap:0;
+    border:1px solid var(--line-strong);
+    background:var(--bg-2);
+  }
+  .search-row input{
+    flex:1;
+    background:transparent;
+    border:none;
+    color:var(--text);
+    font-family:"Source Serif 4", serif;
+    font-size:16px;
+    padding:14px 16px;
+    outline:none;
+  }
+  .search-row input::placeholder{color:var(--text-faint); font-style:italic;}
+  .search-row button{
+    font-family:"Bebas Neue", serif;
+    font-size:18px;
+    letter-spacing:0.03em;
+    background:var(--gold);
+    color:var(--btn-text);
+    border:none;
+    padding:0 22px;
+    cursor:pointer;
+  }
+  .search-row button:hover{filter:brightness(1.1);}
+  .search-row .clear-btn{
+    background:transparent;
+    color:var(--text-faint);
+    border-left:1px solid var(--line-strong);
+    padding:0 18px;
+  }
+  .search-row .clear-btn:hover{color:var(--text); filter:none;}
+
+  .filters{
+    display:flex;
+    gap:14px;
+    margin:16px 0 6px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .filters .field{display:flex; flex-direction:column; gap:4px;}
+  .filters label{font-size:12px; color:var(--text-faint); text-transform:none;}
+  .filters select{
+    background:var(--bg-2);
+    border:1px solid var(--line-strong);
+    color:var(--text);
+    font-family:"Source Serif 4", serif;
+    font-size:14px;
+    padding:9px 10px;
+    min-width:170px;
+  }
+  .filters .apply{
+    align-self:flex-end;
+    background:transparent;
+    border:1px solid var(--gold);
+    color:var(--gold);
+    font-family:"Bebas Neue", serif;
+    font-size:16px;
+    padding:9px 18px;
+    cursor:pointer;
+  }
+  .filters .apply:hover{background:var(--gold-soft);}
+
+  .helper-txt{color:var(--text-faint); font-size:13px; margin:10px 0 0;}
+
+  .results{margin-top:34px;}
+  .results-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+    margin-bottom:6px;
+  }
+  .results-head h2{margin:0;}
+  .results-head span{font-size:13px; color:var(--text-faint);}
+
+  .card{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    gap:20px;
+    padding:22px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .poster{
+    width:110px;
+    height:163px;
+    border-radius:2px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px;
+    text-align:center;
+    position:relative;
+    box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .poster .ptitle{
+    font-family:"Bebas Neue", serif;
+    font-size:15px;
+    line-height:1.15;
+    letter-spacing:0.02em;
+    color:#F2E9DC;
+    text-shadow:0 1px 3px rgba(0,0,0,0.5);
+  }
+  .poster .pyear{
+    position:absolute;
+    bottom:8px;
+    left:0; right:0;
+    font-size:10px;
+    letter-spacing:0.14em;
+    color:rgba(242,233,220,0.75);
+  }
+  .card-body h3{
+    font-family:"Bebas Neue", serif;
+    font-size:24px;
+    margin:0 0 2px;
+    letter-spacing:0.02em;
+  }
+  .card-body h3 .yr{color:var(--text-faint); font-size:16px; font-family:"Source Serif 4",serif;}
+  .meta-line{
+    font-size:14px;
+    color:var(--text-dim);
+    margin:2px 0 10px;
+  }
+  .meta-line b{color:var(--text); font-weight:600;}
+  .rating-tag{
+    display:inline-block;
+    font-size:13px;
+    color:var(--gold);
+    border:1px solid var(--gold);
+    padding:2px 8px;
+    border-radius:2px;
+    margin-right:8px;
+  }
+  .runtime-tag{
+    font-size:13px;
+    color:var(--text-faint);
+  }
+  .hook{
+    font-style:italic;
+    font-size:15px;
+    color:var(--text);
+    margin-top:8px;
+    max-width:62ch;
+  }
+
+  .empty-note{
+    color:var(--text-faint);
+    font-size:14px;
+    padding:30px 0;
+    text-align:center;
+  }
+
+  footer.note{
+    margin-top:60px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:12px;
+    color:var(--text-faint);
+  }
+
+
+  /* ---------- Octubre terror ---------- */
+  .tr-counter{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;}
+  .tr-counter .big{font-family:"Bebas Neue",serif; font-size:56px; color:var(--gold); line-height:1;}
+  .tr-counter .of{font-size:15px; color:var(--text-dim);}
+  .tr-bar{height:9px; background:var(--bg-3); margin:12px 0 4px; border-radius:1px;}
+  .tr-bar > div{height:100%; background:linear-gradient(90deg,var(--crimson),var(--gold)); transition:width .3s;}
+  .tr-draw{margin:26px 0 8px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+  .tr-btn{font-family:"Bebas Neue",serif; font-size:20px; letter-spacing:.03em; background:var(--gold); color:var(--btn-text); border:none; padding:12px 26px; cursor:pointer;}
+  .tr-btn:hover{filter:brightness(1.1);}
+  .tr-btn.ghost{background:transparent; color:var(--gold); border:1px solid var(--gold); font-size:16px; padding:10px 18px;}
+  .tr-btn.ghost:hover{background:var(--gold-soft); filter:none;}
+  .tr-pick{margin-top:16px;}
+  .tr-pick .card{border-top:1px solid var(--line);}
+  .tr-pick .actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;}
+  .tr-list{margin-top:14px;}
+  .tr-row{display:grid; grid-template-columns:28px 1fr auto; gap:12px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); cursor:pointer;}
+  .tr-row input{width:18px; height:18px; accent-color:#CB9A44; cursor:pointer;}
+  .tr-row .t{font-size:15px; color:var(--text);}
+  .tr-row .t .yr{color:var(--text-faint); font-size:13px;}
+  .tr-row .d{font-size:12px; color:var(--text-faint); white-space:nowrap;}
+  .tr-row.seen .t{color:var(--text-faint); text-decoration:line-through; text-decoration-color:var(--line-strong);}
+  .tr-save{font-size:12px; color:var(--text-faint); margin-top:14px;}
+
+
+  /* ---------- Películas 2026 ---------- */
+  .y-kpis{display:flex; gap:30px; flex-wrap:wrap; margin-bottom:34px;}
+  .y-cols{display:flex; align-items:flex-end; gap:6px; height:190px; margin:14px 0 4px; padding-top:18px; border-bottom:1px solid var(--line-strong);}
+  .y-col{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; min-width:0;}
+  .y-col .n{font-size:12px; color:var(--text-dim); margin-bottom:4px;}
+  .y-col .b{width:100%; max-width:46px; background:linear-gradient(180deg,var(--gold),var(--crimson)); border-radius:2px 2px 0 0; min-height:2px;}
+  .y-col.zero .b{background:var(--bg-3);}
+  .y-col.top .b{outline:1px solid var(--gold); outline-offset:2px;}
+  .y-labels{display:flex; gap:6px;}
+  .y-labels span{flex:1; text-align:center; font-size:12px; color:var(--text-faint); min-width:0;}
+  .y-two{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px 36px;}
+  .y-two .bar-row{grid-template-columns:minmax(0,1fr) 70px 28px;}
+  .y-two .bar-row .lbl{white-space:normal;}
+
+  @media (max-width:560px){
+    .card{grid-template-columns:84px 1fr;}
+    .poster{width:84px; height:124px;}
+    .poster .ptitle{font-size:12px;}
+    .bar-row{grid-template-columns:100px 1fr 34px;}
+    nav.tabs button{padding:12px 10px 14px; font-size:17px; flex:none;}
+    .tr-row{grid-template-columns:26px 1fr;} .tr-row .d{grid-column:2;}
+    .search-row input{min-width:0; padding:12px;}
+    .search-row button{padding:0 12px;}
+    .search-row .clear-btn{padding:0 10px;}
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <h1>Sala <span>Propia</span></h1>
+    <p class="tag">Un análisis de lo que ya viste y una brújula para lo que sigue.</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="perfil">Mi Perfil</button>
+    <button class="tab-btn" data-tab="recs">Recomendaciones</button>
+    <button class="tab-btn" data-tab="terror">Octubre Terror</button>
+    <button class="tab-btn" data-tab="year">Películas 2026</button>
+  </nav>
+
+  <section class="panel active" id="panel-perfil"></section>
+  <section class="panel" id="panel-recs"></section>
+  <section class="panel" id="panel-terror"></section>
+  <section class="panel" id="panel-year"></section>
+
+  <footer class="note">
+    Análisis basado en tus 300 películas mejor valoradas de Letterboxd (géneros, directores, elenco y país enriquecidos a mano). Las recomendaciones salen de tu watchlist más un catálogo curado, cruzados contra lo que ya viste. Los carteles son ilustrativos, no fotografías reales. <span id="syncNote"></span>
+  </footer>
+</div>
+
+<script>
+const PROFILE_DATA = [["The Devils", 1971, 5.0, "Horror/Drama", "Ken Russell", "Oliver Reed", "Vanessa Redgrave", "UK"], ["Diabolique", 1955, 5, "Thriller", "Henri-Georges Clouzot", "Simone Signoret", "Véra Clouzot", "France"], ["The Odyssey", 2026, 5, "Adventure/Drama", "Christopher Nolan", "Matt Damon", "Tom Holland", "USA"], ["The Wages of Fear", 1953, 5, "Thriller/Adventure", "Henri-Georges Clouzot", "Yves Montand", "Charles Vanel", "France"], ["Obsession", 2025, 5.0, "Horror", "Curry Barker", "Michael Johnston", "Inde Navarrette", "USA"], ["Michael Jackson's Thriller", 1983, 5, "Music", "John Landis", "Michael Jackson", "Ola Ray", "USA"], ["Forrest Gump", 1994, 5, "Drama/Comedy", "Robert Zemeckis", "Tom Hanks", "Robin Wright", "USA"], ["Mary Poppins", 1964, 5, "Family/Musical", "Robert Stevenson", "Julie Andrews", "Dick Van Dyke", "USA"], ["Kill Bill: The Whole Bloody Affair", 2004, 5, "Action", "Quentin Tarantino", "Uma Thurman", "David Carradine", "USA"], ["Midnight Cowboy", 1969, 5, "Drama", "John Schlesinger", "Dustin Hoffman", "Jon Voight", "USA"], ["The Apartment", 1960, 5, "Comedy/Drama", "Billy Wilder", "Jack Lemmon", "Shirley MacLaine", "USA"], ["Some Like It Hot", 1959, 5, "Comedy", "Billy Wilder", "Marilyn Monroe", "Tony Curtis", "USA"], ["Stalag 17", 1953, 5, "War/Drama", "Billy Wilder", "William Holden", "Don Taylor", "USA"], ["The Searchers", 1956, 5, "Western", "John Ford", "John Wayne", "Jeffrey Hunter", "USA"], ["Halloween", 1978, 5, "Horror", "John Carpenter", "Jamie Lee Curtis", "Donald Pleasence", "USA"], ["Gone with the Wind", 1939, 5, "Drama/Romance", "Victor Fleming", "Clark Gable", "Vivien Leigh", "USA"], ["The Children's Hour", 1961, 5, "Drama", "William Wyler", "Audrey Hepburn", "Shirley MacLaine", "USA"], ["Roman Holiday", 1953, 5, "Romance/Comedy", "William Wyler", "Audrey Hepburn", "Gregory Peck", "USA"], ["North by Northwest", 1959, 5, "Thriller", "Alfred Hitchcock", "Cary Grant", "Eva Marie Saint", "USA"], ["Once Upon a Time in America", 1984, 5, "Crime/Drama", "Sergio Leone", "Robert De Niro", "James Woods", "USA"], ["The Brutalist", 2024, 5, "Drama", "Brady Corbet", "Adrien Brody", "Felicity Jones", "USA"], ["Coco", 2017, 5, "Animation/Family", "Lee Unkrich", "Anthony Gonzalez", "Gael García Bernal", "USA"], ["All That Jazz", 1979, 5, "Musical/Drama", "Bob Fosse", "Roy Scheider", "Jessica Lange", "USA"], ["The Untouchables", 1987, 5, "Crime/Drama", "Brian De Palma", "Kevin Costner", "Sean Connery", "USA"], ["Carlito's Way", 1993, 5, "Crime/Drama", "Brian De Palma", "Al Pacino", "Sean Penn", "USA"], ["Psycho", 1960, 5.0, "Horror/Thriller", "Alfred Hitchcock", "Anthony Perkins", "Janet Leigh", "USA"], ["The Graduate", 1967, 5.0, "Comedy/Drama", "Mike Nichols", "Dustin Hoffman", "Anne Bancroft", "USA"], ["Cast Away", 2000, 5, "Drama/Adventure", "Robert Zemeckis", "Tom Hanks", "Helen Hunt", "USA"], ["Toy Story", 1995, 5, "Animation/Family", "John Lasseter", "Tom Hanks", "Tim Allen", "USA"], ["The Good, the Bad and the Ugly", 1966, 5, "Western", "Sergio Leone", "Clint Eastwood", "Eli Wallach", "Italy"], ["The Lion King", 1994, 5, "Animation/Family", "Roger Allers", "Matthew Broderick", "James Earl Jones", "USA"], ["Casablanca", 1942, 5, "Romance/Drama", "Michael Curtiz", "Humphrey Bogart", "Ingrid Bergman", "USA"], ["The Godfather", 1972, 5, "Crime/Drama", "Francis Ford Coppola", "Marlon Brando", "Al Pacino", "USA"], ["Godzilla Minus One", 2023, 5, "Sci-Fi/Action", "Takashi Yamazaki", "Ryunosuke Kamiki", "Minami Hamabe", "Japan"], ["GoodFellas", 1990, 5, "Crime/Drama", "Martin Scorsese", "Ray Liotta", "Robert De Niro", "USA"], ["The Social Network", 2010, 5, "Drama", "David Fincher", "Jesse Eisenberg", "Andrew Garfield", "USA"], ["The Lord of the Rings: The Return of the King", 2003, 5, "Fantasy/Adventure", "Peter Jackson", "Elijah Wood", "Viggo Mortensen", "New Zealand"], ["12 Angry Men", 1957, 5, "Drama", "Sidney Lumet", "Henry Fonda", "Lee J. Cobb", "USA"], ["Titanic", 1997, 5, "Romance/Drama", "James Cameron", "Leonardo DiCaprio", "Kate Winslet", "USA"], ["Schindler's List", 1993, 5, "Drama/War", "Steven Spielberg", "Liam Neeson", "Ralph Fiennes", "USA"], ["The Wolf of Wall Street", 2013, 5, "Comedy/Crime", "Martin Scorsese", "Leonardo DiCaprio", "Jonah Hill", "USA"], ["Kill Bill: Vol. 1", 2003, 5, "Action", "Quentin Tarantino", "Uma Thurman", "Lucy Liu", "USA"], ["Once Upon a Time... in Hollywood", 2019, 5, "Comedy/Drama", "Quentin Tarantino", "Leonardo DiCaprio", "Brad Pitt", "USA"], ["Back to the Future", 1985, 5.0, "Sci-Fi/Comedy", "Robert Zemeckis", "Michael J. Fox", "Christopher Lloyd", "USA"], ["Casino Royale", 2006, 5, "Action/Thriller", "Martin Campbell", "Daniel Craig", "Eva Green", "UK"], ["Jurassic Park", 1993, 5, "Sci-Fi/Adventure", "Steven Spielberg", "Sam Neill", "Laura Dern", "USA"], ["Citizen Kane", 1941, 5, "Drama", "Orson Welles", "Orson Welles", "Joseph Cotten", "USA"], ["The Shining", 1980, 5, "Horror", "Stanley Kubrick", "Jack Nicholson", "Shelley Duvall", "UK"], ["X", 2022, 5, "Horror", "Ti West", "Mia Goth", "Jenna Ortega", "USA"], ["Terminator 2: Judgment Day", 1991, 4.5, "Action/Sci-Fi", "James Cameron", "Arnold Schwarzenegger", "Linda Hamilton", "USA"], ["The Sixth Sense", 1999, 4.5, "Thriller/Drama", "M. Night Shyamalan", "Bruce Willis", "Haley Joel Osment", "USA"], ["The Ox-Bow Incident", 1943, 4.5, "Western", "William A. Wellman", "Henry Fonda", "Dana Andrews", "USA"], ["Sorcerer", 1977, 4.5, "Thriller/Adventure", "William Friedkin", "Roy Scheider", "Bruno Cremer", "USA"], ["The Lord of the Rings: The Fellowship of the Ring", 2001, 4.5, "Fantasy/Adventure", "Peter Jackson", "Elijah Wood", "Ian McKellen", "New Zealand"], ["Under the Sand", 2000, 4.5, "Drama", "François Ozon", "Charlotte Rampling", "Bruno Cremer", "France"], ["The Fabelmans", 2022, 4.5, "Drama", "Steven Spielberg", "Gabriel LaBelle", "Michelle Williams", "USA"], ["Nine Queens", 2000, 4.5, "Crime/Thriller", "Fabián Bielinsky", "Ricardo Darín", "Gastón Pauls", "Argentina"], ["Stand by Me", 1986, 4.5, "Drama/Adventure", "Rob Reiner", "Wil Wheaton", "River Phoenix", "USA"], ["The Lost Daughter", 2021, 4.5, "Drama", "Maggie Gyllenhaal", "Olivia Colman", "Dakota Johnson", "USA"], ["Scream", 1996, 4.5, "Horror", "Wes Craven", "Neve Campbell", "Courteney Cox", "USA"], ["Drag Me to Hell", 2009, 4.5, "Horror", "Sam Raimi", "Alison Lohman", "Justin Long", "USA"], ["East of Eden", 1955, 4.5, "Drama", "Elia Kazan", "James Dean", "Julie Harris", "USA"], ["Sabrina", 1954, 4.5, "Romance/Comedy", "Billy Wilder", "Audrey Hepburn", "Humphrey Bogart", "USA"], ["Blue Is the Warmest Color", 2013, 4.5, "Drama/Romance", "Abdellatif Kechiche", "Adèle Exarchopoulos", "Léa Seydoux", "France"], ["Rear Window", 1954, 4.5, "Thriller", "Alfred Hitchcock", "James Stewart", "Grace Kelly", "USA"], ["Sunset Boulevard", 1950, 4.5, "Drama", "Billy Wilder", "William Holden", "Gloria Swanson", "USA"], ["The Killing", 1956, 4.5, "Crime/Noir", "Stanley Kubrick", "Sterling Hayden", "Coleen Gray", "USA"], ["Mulholland Drive", 2001, 4.5, "Mystery/Drama", "David Lynch", "Naomi Watts", "Laura Harring", "USA"], ["The Thing", 1982, 4.5, "Horror/Sci-Fi", "John Carpenter", "Kurt Russell", "Wilford Brimley", "USA"], ["One Battle After Another", 2025, 4.5, "Crime/Action", "Paul Thomas Anderson", "Leonardo DiCaprio", "Sean Penn", "USA"], ["Rio Bravo", 1959, 4.5, "Western", "Howard Hawks", "John Wayne", "Dean Martin", "USA"], ["The Incredibles", 2004, 4.5, "Animation/Action", "Brad Bird", "Craig T. Nelson", "Holly Hunter", "USA"], ["Pulp Fiction", 1994, 4.5, "Crime", "Quentin Tarantino", "John Travolta", "Samuel L. Jackson", "USA"], ["Moana", 2016, 4.5, "Animation/Family", "Ron Clements", "Auli'i Cravalho", "Dwayne Johnson", "USA"], ["Boogie Nights", 1997, 4.5, "Drama", "Paul Thomas Anderson", "Mark Wahlberg", "Julianne Moore", "USA"], ["Notting Hill", 1999, 4.5, "Romance/Comedy", "Roger Michell", "Julia Roberts", "Hugh Grant", "UK"], ["Blow Out", 1981, 4.5, "Thriller", "Brian De Palma", "John Travolta", "Nancy Allen", "USA"], ["Dressed to Kill", 1980, 4.5, "Thriller", "Brian De Palma", "Michael Caine", "Angie Dickinson", "USA"], ["Vertigo", 1958, 4.5, "Thriller/Mystery", "Alfred Hitchcock", "James Stewart", "Kim Novak", "USA"], ["Phantom of the Paradise", 1974, 4.5, "Musical/Horror", "Brian De Palma", "Paul Williams", "William Finley", "USA"], ["The Godfather Part II", 1974, 4.5, "Crime/Drama", "Francis Ford Coppola", "Al Pacino", "Robert De Niro", "USA"], ["The Hateful Eight", 2015, 4.5, "Western", "Quentin Tarantino", "Samuel L. Jackson", "Kurt Russell", "USA"], ["Rebecca", 1940, 4.5, "Thriller/Romance", "Alfred Hitchcock", "Laurence Olivier", "Joan Fontaine", "USA"], ["Batman Returns", 1992, 4.5, "Action/Fantasy", "Tim Burton", "Michael Keaton", "Michelle Pfeiffer", "USA"], ["Star Wars", 1977, 4.5, "Sci-Fi/Adventure", "George Lucas", "Mark Hamill", "Harrison Ford", "USA"], ["Back to the Future Part II", 1989, 4.5, "Sci-Fi/Comedy", "Robert Zemeckis", "Michael J. Fox", "Christopher Lloyd", "USA"], ["The Martian", 2015, 4.5, "Sci-Fi/Drama", "Ridley Scott", "Matt Damon", "Jessica Chastain", "USA"], ["First Blood", 1982, 4.5, "Action", "Ted Kotcheff", "Sylvester Stallone", "Richard Crenna", "USA"], ["Anatomy of a Fall", 2023, 4.5, "Drama/Thriller", "Justine Triet", "Sandra Hüller", "Swann Arlaud", "France"], ["Dead Poets Society", 1989, 4.5, "Drama", "Peter Weir", "Robin Williams", "Ethan Hawke", "USA"], ["Normal People", 2020, 4.5, "Drama/Romance", "Lenny Abrahamson", "Daisy Edgar-Jones", "Paul Mescal", "Ireland"], ["The Worst Person in the World", 2021, 4.5, "Drama/Romance", "Joachim Trier", "Renate Reinsve", "Anders Danielsen Lie", "Norway"], ["Killers of the Flower Moon", 2023, 4.5, "Crime/Drama", "Martin Scorsese", "Leonardo DiCaprio", "Lily Gladstone", "USA"], ["The Blair Witch Project", 1999, 4.5, "Horror", "Daniel Myrick", "Heather Donahue", "Michael C. Williams", "USA"], ["Dracula", 1958, 4.5, "Horror", "Terence Fisher", "Christopher Lee", "Peter Cushing", "UK"], ["Seven Samurai", 1954, 4.5, "Action/Drama", "Akira Kurosawa", "Toshiro Mifune", "Takashi Shimura", "Japan"], ["Avatar: The Way of Water", 2022, 4.5, "Sci-Fi/Action", "James Cameron", "Sam Worthington", "Zoe Saldaña", "USA"], ["Doctor Strange in the Multiverse of Madness", 2022, 4.5, "Fantasy/Action", "Sam Raimi", "Benedict Cumberbatch", "Elizabeth Olsen", "USA"], ["Avatar", 2009, 4.5, "Sci-Fi/Action", "James Cameron", "Sam Worthington", "Zoe Saldaña", "USA"], ["RRR", 2022, 4.5, "Action/Drama", "S. S. Rajamouli", "N. T. Rama Rao Jr.", "Ram Charan", "India"], ["Jaws", 1975, 4.5, "Thriller/Adventure", "Steven Spielberg", "Roy Scheider", "Robert Shaw", "USA"], ["West Side Story", 2021, 4.5, "Musical/Romance", "Steven Spielberg", "Ansel Elgort", "Rachel Zegler", "USA"], ["Kill Bill: Vol. 2", 2004, 4.5, "Action", "Quentin Tarantino", "Uma Thurman", "David Carradine", "USA"], ["Dua Lipa: Live from Mexico", 2026, 4, "Music", "", "Dua Lipa", "", ""], ["In the Master's Shadow: Hitchcock's Legacy", 2008, 4, "Documentary", "Gary Leva", "", "", ""], ["The Day the Earth Stood Still", 1951, 4, "Sci-Fi", "Robert Wise", "Michael Rennie", "Patricia Neal", "USA"], ["Prince of Darkness", 1987, 4, "Horror", "John Carpenter", "Donald Pleasence", "Jameson Parker", "USA"], ["Invasion of the Body Snatchers", 1978, 4, "Horror/Sci-Fi", "Philip Kaufman", "Donald Sutherland", "Brooke Adams", "USA"], ["Evil Dead", 2013, 4, "Horror", "Fede Álvarez", "Jane Levy", "Shiloh Fernandez", "USA"], ["Colony", 2026, 4.0, "Horror/Action", "Yeon Sang-ho", "Jun Ji-hyun", "Ji Chang-wook", "South Korea"], ["Is God Is", 2026, 4.0, "Drama/Thriller", "Aleshea Harris", "Kara Young", "Mallori Johnson", "USA"], ["The Grapes of Death", 1978, 4.0, "Horror", "Jean Rollin", "Marie-Georges Pascal", "Serge Marquand", "France"], ["Spider-Man: Brand New Day", 2026, 4.0, "Action/Adventure", "Destin Daniel Cretton", "Tom Holland", "Zendaya", "USA"], ["The Aviator's Wife", 1981, 4, "Comedy/Drama", "Éric Rohmer", "Philippe Marlaud", "Marie Rivière", "France"], ["Claire's Knee", 1970, 4, "Drama/Romance", "Éric Rohmer", "Jean-Claude Brialy", "Aurora Cornu", "France"], ["Love in the Afternoon", 1972, 4, "Drama/Romance", "Éric Rohmer", "Bernard Verley", "Zouzou", "France"], ["The Verdict", 1982, 4, "Drama", "Sidney Lumet", "Paul Newman", "Charlotte Rampling", "USA"], ["Bambi", 1942, 4, "Animation/Family", "David Hand", "Hardie Albright", "Stan Alexander", "USA"], ["Jenny Lamour", 1947, 4, "Crime/Noir", "Henri-Georges Clouzot", "Louis Jouvet", "Suzy Delair", "France"], ["Batman: Under the Red Hood", 2010, 4, "Animation/Action", "Brandon Vietti", "Bruce Greenwood", "Jensen Ackles", "USA"], ["Le Corbeau", 1943, 4, "Drama/Thriller", "Henri-Georges Clouzot", "Pierre Fresnay", "Ginette Leclerc", "France"], ["Spider-Man 2", 2004, 4, "Action/Adventure", "Sam Raimi", "Tobey Maguire", "Kirsten Dunst", "USA"], ["The Murderer Lives at Number 21", 1942, 4, "Crime/Comedy", "Henri-Georges Clouzot", "Pierre Fresnay", "Suzy Delair", "France"], ["The Earrings of Madame de...", 1953, 4, "Drama/Romance", "Max Ophüls", "Danielle Darrieux", "Charles Boyer", "France"], ["The Invite", 2026, 4, "Comedy/Drama", "Olivia Wilde", "Seth Rogen", "Penélope Cruz", "USA"], ["Rebel Without a Cause", 1955, 4, "Drama", "Nicholas Ray", "James Dean", "Natalie Wood", "USA"], ["Bringing Up Baby", 1938, 4, "Comedy", "Howard Hawks", "Katharine Hepburn", "Cary Grant", "USA"], ["A Few Good Men", 1992, 4, "Drama", "Rob Reiner", "Tom Cruise", "Jack Nicholson", "USA"], ["The Postman Always Rings Twice", 1946, 4, "Noir/Drama", "Tay Garnett", "Lana Turner", "John Garfield", "USA"], ["In the House", 2012, 4, "Drama/Thriller", "François Ozon", "Fabrice Luchini", "Kristin Scott Thomas", "France"], ["Swimming Pool", 2003, 4, "Thriller/Drama", "François Ozon", "Charlotte Rampling", "Ludivine Sagnier", "France"], ["Sleeping with the Enemy", 1991, 4, "Thriller", "Joseph Ruben", "Julia Roberts", "Patrick Bergin", "USA"], ["Bugonia", 2025, 4, "Sci-Fi/Comedy", "Yorgos Lanthimos", "Emma Stone", "Jesse Plemons", "USA"], ["Deep Red", 1975, 4, "Giallo/Horror", "Dario Argento", "David Hemmings", "Daria Nicolodi", "Italy"], ["Ghost", 1990, 4, "Romance/Fantasy", "Jerry Zucker", "Patrick Swayze", "Demi Moore", "USA"], ["Kiss Me Deadly", 1955, 4, "Noir", "Robert Aldrich", "Ralph Meeker", "Albert Dekker", "USA"], ["The Drama", 2026, 4, "Romance/Comedy", "Kristoffer Borgli", "Zendaya", "Robert Pattinson", "USA"], ["Laura", 1944, 4, "Noir/Mystery", "Otto Preminger", "Gene Tierney", "Dana Andrews", "USA"], ["The Treasure of the Sierra Madre", 1948, 4, "Adventure/Drama", "John Huston", "Humphrey Bogart", "Walter Huston", "USA"], ["To Have and Have Not", 1944, 4, "Adventure/Romance", "Howard Hawks", "Humphrey Bogart", "Lauren Bacall", "USA"], ["High Sierra", 1941, 4, "Crime/Noir", "Raoul Walsh", "Humphrey Bogart", "Ida Lupino", "USA"], ["WALL·E", 2008, 4, "Animation/Sci-Fi", "Andrew Stanton", "Ben Burtt", "Elissa Knight", "USA"], ["The Big Heat", 1953, 4, "Noir/Crime", "Fritz Lang", "Glenn Ford", "Gloria Grahame", "USA"], ["When Harry Met Sally...", 1989, 4, "Romance/Comedy", "Rob Reiner", "Billy Crystal", "Meg Ryan", "USA"], ["Oldboy", 2003, 4, "Thriller/Action", "Park Chan-wook", "Choi Min-sik", "Yu Ji-tae", "South Korea"], ["The Revenant", 2015, 4, "Adventure/Drama", "Alejandro G. Iñárritu", "Leonardo DiCaprio", "Tom Hardy", "USA"], ["RoboCop", 1987, 4, "Action/Sci-Fi", "Paul Verhoeven", "Peter Weller", "Nancy Allen", "USA"], ["No Other Choice", 2025, 4, "Thriller/Drama", "Park Chan-wook", "Lee Byung-hun", "Son Ye-jin", "South Korea"], ["Train Dreams", 2025, 4, "Drama", "Clint Bentley", "Joel Edgerton", "Felicity Jones", "USA"], ["The Invisible Man", 1933, 4, "Horror/Sci-Fi", "James Whale", "Claude Rains", "Gloria Stuart", "USA"], ["The Secret Agent", 2025, 4, "Drama/Thriller", "Kleber Mendonça Filho", "Wagner Moura", "Maria Fernanda Cândido", "Brazil"], ["Scream 4", 2011, 4, "Horror", "Wes Craven", "Neve Campbell", "Courteney Cox", "USA"], ["Häxan", 1922, 4, "Documentary/Horror", "Benjamin Christensen", "Maren Pedersen", "Clara Pontoppidan", "Sweden"], ["Sentimental Value", 2025, 4, "Drama", "Joachim Trier", "Renate Reinsve", "Stellan Skarsgård", "Norway"], ["The Kid", 1921, 4, "Comedy/Drama", "Charlie Chaplin", "Charlie Chaplin", "Jackie Coogan", "USA"], ["Don't Breathe", 2016, 4, "Horror/Thriller", "Fede Álvarez", "Jane Levy", "Stephen Lang", "USA"], ["Misery", 1990, 4, "Thriller", "Rob Reiner", "James Caan", "Kathy Bates", "USA"], ["Marty Supreme", 2025, 4, "Drama/Comedy", "Josh Safdie", "Timothée Chalamet", "Gwyneth Paltrow", "USA"], ["All Too Well: The Short Film", 2021, 4, "Drama/Music", "Taylor Swift", "Sadie Sink", "Dylan O'Brien", "USA"], ["The Last Boy Scout", 1991, 4, "Action", "Tony Scott", "Bruce Willis", "Damon Wayans", "USA"], ["Die Hard", 1988, 4, "Action", "John McTiernan", "Bruce Willis", "Alan Rickman", "USA"], ["The Town", 2010, 4, "Crime/Drama", "Ben Affleck", "Ben Affleck", "Jeremy Renner", "USA"], ["Cape Fear", 1962, 4, "Thriller", "J. Lee Thompson", "Gregory Peck", "Robert Mitchum", "USA"], ["Niagara", 1953, 4, "Noir/Thriller", "Henry Hathaway", "Marilyn Monroe", "Joseph Cotten", "USA"], ["Catch Me If You Can", 2002, 4, "Crime/Drama", "Steven Spielberg", "Leonardo DiCaprio", "Tom Hanks", "USA"], ["Home Alone 2: Lost in New York", 1992, 4, "Comedy/Family", "Chris Columbus", "Macaulay Culkin", "Joe Pesci", "USA"], ["Rogue One: A Star Wars Story", 2016, 4, "Sci-Fi/Action", "Gareth Edwards", "Felicity Jones", "Diego Luna", "USA"], ["Frankenstein", 2025, 4, "Horror/Drama", "Guillermo del Toro", "Oscar Isaac", "Jacob Elordi", "USA"], ["It Was Just an Accident", 2025, 4, "Drama/Thriller", "Jafar Panahi", "Vahid Mobasseri", "Mariam Afshari", "Iran"], ["Love in the Afternoon", 1957, 4, "Romance/Comedy", "Billy Wilder", "Gary Cooper", "Audrey Hepburn", "USA"], ["50 First Dates", 2004, 4, "Romance/Comedy", "Peter Segal", "Adam Sandler", "Drew Barrymore", "USA"], ["Witness for the Prosecution", 1957, 4, "Drama/Mystery", "Billy Wilder", "Tyrone Power", "Marlene Dietrich", "USA"], ["Annie Hall", 1977, 4, "Comedy/Romance", "Woody Allen", "Woody Allen", "Diane Keaton", "USA"], ["Charade", 1963, 4, "Thriller/Comedy", "Stanley Donen", "Cary Grant", "Audrey Hepburn", "USA"], ["Black Christmas", 1974, 4.0, "Horror", "Bob Clark", "Olivia Hussey", "Margot Kidder", "Canada"], ["Ace in the Hole", 1951, 4, "Drama/Noir", "Billy Wilder", "Kirk Douglas", "Jan Sterling", "USA"], ["Goldfinger", 1964, 4, "Action/Spy", "Guy Hamilton", "Sean Connery", "Honor Blackman", "UK"], ["On Her Majesty's Secret Service", 1969, 4, "Action/Spy", "Peter R. Hunt", "George Lazenby", "Diana Rigg", "UK"], ["Klute", 1971, 4, "Thriller/Drama", "Alan J. Pakula", "Jane Fonda", "Donald Sutherland", "USA"], ["Beauty and the Beast", 1991, 4, "Animation/Family", "Gary Trousdale", "Paige O'Hara", "Robby Benson", "USA"], ["Midnight Run", 1988, 4, "Action/Comedy", "Martin Brest", "Robert De Niro", "Charles Grodin", "USA"], ["Batman v Superman: Dawn of Justice", 2016, 4, "Action/Fantasy", "Zack Snyder", "Ben Affleck", "Henry Cavill", "USA"], ["Night of the Living Dead", 1968, 4, "Horror", "George A. Romero", "Duane Jones", "Judith O'Dea", "USA"], ["Pride & Prejudice", 2005, 4, "Romance/Drama", "Joe Wright", "Keira Knightley", "Matthew Macfadyen", "UK"], ["Jaws @ 50: The Definitive Inside Story", 2025, 4, "Documentary", "Laurent Bouzereau", "Steven Spielberg", "", "USA"], ["A Nightmare on Elm Street", 1984, 4, "Horror", "Wes Craven", "Robert Englund", "Heather Langenkamp", "USA"], ["The Ballad of Wallis Island", 2025, 4, "Comedy/Drama", "James Griffiths", "Tim Key", "Tom Basden", "UK"], ["Now, Voyager", 1942, 4, "Drama/Romance", "Irving Rapper", "Bette Davis", "Paul Henreid", "USA"], ["The Elephant Man", 1980, 4, "Drama", "David Lynch", "Anthony Hopkins", "John Hurt", "UK"], ["Gaslight", 1944, 4, "Thriller/Drama", "George Cukor", "Ingrid Bergman", "Charles Boyer", "USA"], ["Destry Rides Again", 1939, 4, "Western/Comedy", "George Marshall", "Marlene Dietrich", "James Stewart", "USA"], ["Two for the Road", 1967, 4, "Romance/Drama", "Stanley Donen", "Audrey Hepburn", "Albert Finney", "UK"], ["Iron Man", 2008, 4, "Action/Sci-Fi", "Jon Favreau", "Robert Downey Jr.", "Gwyneth Paltrow", "USA"], ["Wait Until Dark", 1967, 4, "Thriller", "Terence Young", "Audrey Hepburn", "Alan Arkin", "USA"], ["The Rules of the Game", 1939, 4, "Comedy/Drama", "Jean Renoir", "Marcel Dalio", "Nora Gregor", "France"], ["Superman II: The Richard Donner Cut", 2006, 4, "Action/Sci-Fi", "Richard Donner", "Christopher Reeve", "Gene Hackman", "USA"], ["Melancholia", 2011, 4, "Drama/Sci-Fi", "Lars von Trier", "Kirsten Dunst", "Charlotte Gainsbourg", "Denmark"], ["The Roaring Twenties", 1939, 4, "Crime/Drama", "Raoul Walsh", "James Cagney", "Humphrey Bogart", "USA"], ["Mr. Smith Goes to Washington", 1939, 4, "Drama", "Frank Capra", "James Stewart", "Jean Arthur", "USA"], ["Mystic River", 2003, 4, "Crime/Drama", "Clint Eastwood", "Sean Penn", "Tim Robbins", "USA"], ["Ratatouille", 2007, 4, "Animation/Family", "Brad Bird", "Patton Oswalt", "Lou Romano", "USA"], ["Aladdin", 1992, 4, "Animation/Family", "Ron Clements", "Scott Weinger", "Robin Williams", "USA"], ["An American in Paris", 1951, 4, "Musical/Romance", "Vincente Minnelli", "Gene Kelly", "Leslie Caron", "USA"], ["Daddio", 2023, 4, "Drama", "Christy Hall", "Dakota Johnson", "Sean Penn", "USA"], ["Modern Times", 1936, 4, "Comedy", "Charlie Chaplin", "Charlie Chaplin", "Paulette Goddard", "USA"], ["Double Indemnity", 1944, 4, "Noir/Crime", "Billy Wilder", "Barbara Stanwyck", "Fred MacMurray", "USA"], ["Final Destination", 2000, 4, "Horror", "James Wong", "Devon Sawa", "Ali Larter", "USA"], ["Funny Face", 1957, 4, "Musical/Romance", "Stanley Donen", "Audrey Hepburn", "Fred Astaire", "USA"], ["The Incredible Shrinking Man", 1957, 4, "Sci-Fi", "Jack Arnold", "Grant Williams", "Randy Stuart", "USA"], ["The Man Who Shot Liberty Valance", 1962, 4, "Western", "John Ford", "John Wayne", "James Stewart", "USA"], ["Sinners", 2025, 4, "Horror/Drama", "Ryan Coogler", "Michael B. Jordan", "Miles Caton", "USA"], ["Daughters of Darkness", 1971, 4, "Horror", "Harry Kümel", "Delphine Seyrig", "John Karlen", "Belgium"], ["Ready Player One", 2018, 4, "Sci-Fi/Adventure", "Steven Spielberg", "Tye Sheridan", "Olivia Cooke", "USA"], ["The Passion of the Christ", 2004, 4, "Drama", "Mel Gibson", "Jim Caviezel", "Monica Bellucci", "USA"], ["Carrie", 1976, 4, "Horror", "Brian De Palma", "Sissy Spacek", "Piper Laurie", "USA"], ["One Flew Over the Cuckoo's Nest", 1975, 4, "Drama", "Milos Forman", "Jack Nicholson", "Louise Fletcher", "USA"], ["It Happened One Night", 1934, 4, "Comedy/Romance", "Frank Capra", "Clark Gable", "Claudette Colbert", "USA"], ["The Florida Project", 2017, 4, "Drama", "Sean Baker", "Brooklynn Prince", "Willem Dafoe", "USA"], ["Ne Zha", 2019, 4, "Animation/Fantasy", "Jiaozi", "Lü Yanting", "Han Mo", "China"], ["Peeping Tom", 1960, 4, "Horror/Thriller", "Michael Powell", "Carl Boehm", "Moira Shearer", "UK"], ["The Wild Robot", 2024, 4, "Animation/Sci-Fi", "Chris Sanders", "Lupita Nyong'o", "Pedro Pascal", "USA"], ["Single White Female", 1992, 4, "Thriller", "Barbet Schroeder", "Bridget Fonda", "Jennifer Jason Leigh", "USA"], ["Wild at Heart", 1990, 4, "Crime/Romance", "David Lynch", "Nicolas Cage", "Laura Dern", "USA"], ["Le Trou", 1960, 4, "Crime/Drama", "Jacques Becker", "Philippe Leroy", "Jean Keraudy", "France"], ["Nosferatu", 2024, 4, "Horror", "Robert Eggers", "Bill Skarsgård", "Lily-Rose Depp", "USA"], ["La Dolce Vita", 1960, 4, "Drama", "Federico Fellini", "Marcello Mastroianni", "Anita Ekberg", "Italy"], ["The Dreamers", 2003, 4, "Drama", "Bernardo Bertolucci", "Michael Pitt", "Eva Green", "France"], ["The Wizard of Oz", 1939, 4, "Fantasy/Musical", "Victor Fleming", "Judy Garland", "Ray Bolger", "USA"], ["Toy Story 3", 2010, 4, "Animation/Family", "Lee Unkrich", "Tom Hanks", "Tim Allen", "USA"], ["Music by John Williams", 2024, 4, "Documentary", "Laurent Bouzereau", "John Williams", "Steven Spielberg", "USA"], ["The Substance", 2024, 4, "Horror", "Coralie Fargeat", "Demi Moore", "Margaret Qualley", "France"], ["All About My Mother", 1999, 4, "Drama", "Pedro Almodóvar", "Cecilia Roth", "Marisa Paredes", "Spain"], ["Snow White and the Seven Dwarfs", 1937, 4, "Animation/Family", "David Hand", "Adriana Caselotti", "Harry Stockwell", "USA"], ["Gladiator", 2000, 4, "Action/Drama", "Ridley Scott", "Russell Crowe", "Joaquin Phoenix", "USA"], ["Dumb and Dumber", 1994, 4, "Comedy", "Peter Farrelly", "Jim Carrey", "Jeff Daniels", "USA"], ["The Cabinet of Dr. Caligari", 1920, 4, "Horror", "Robert Wiene", "Werner Krauss", "Conrad Veidt", "Germany"], ["The Irishman", 2019, 4, "Crime/Drama", "Martin Scorsese", "Robert De Niro", "Al Pacino", "USA"], ["Toy Story 2", 1999, 4, "Animation/Family", "John Lasseter", "Tom Hanks", "Tim Allen", "USA"], ["Sleepless in Seattle", 1993, 4, "Romance/Comedy", "Nora Ephron", "Tom Hanks", "Meg Ryan", "USA"], ["Mean Streets", 1973, 4, "Crime/Drama", "Martin Scorsese", "Robert De Niro", "Harvey Keitel", "USA"], ["The Cutting Edge: The Magic of Movie Editing", 2004, 4, "Documentary", "Wendy Apple", "Walter Murch", "Sally Menke", "USA"], ["Shrek 2", 2004, 4, "Animation/Comedy", "Andrew Adamson", "Mike Myers", "Eddie Murphy", "USA"], ["Body Double", 1984, 4, "Thriller", "Brian De Palma", "Craig Wasson", "Melanie Griffith", "USA"], ["Michael Jackson: Bad", 1987, 4, "Music", "Martin Scorsese", "Michael Jackson", "Wesley Snipes", "USA"], ["Spider-Man", 2002, 4, "Action/Adventure", "Sam Raimi", "Tobey Maguire", "Kirsten Dunst", "USA"], ["Superman", 1978, 4, "Action/Sci-Fi", "Richard Donner", "Christopher Reeve", "Margot Kidder", "USA"], ["Pearl", 2022, 4, "Horror", "Ti West", "Mia Goth", "David Corenswet", "USA"], ["The Breakfast Club", 1985, 4, "Comedy/Drama", "John Hughes", "Emilio Estevez", "Molly Ringwald", "USA"], ["Mission: Impossible", 1996, 4, "Action/Thriller", "Brian De Palma", "Tom Cruise", "Jon Voight", "USA"], ["A Quiet Place", 2018, 4, "Horror/Sci-Fi", "John Krasinski", "Emily Blunt", "John Krasinski", "USA"], ["The Secret in Their Eyes", 2009, 4, "Thriller/Drama", "Juan José Campanella", "Ricardo Darín", "Soledad Villamil", "Argentina"], ["My Fair Lady", 1964, 4, "Musical/Romance", "George Cukor", "Audrey Hepburn", "Rex Harrison", "USA"], ["Inside Out", 2015, 4, "Animation/Family", "Pete Docter", "Amy Poehler", "Phyllis Smith", "USA"], ["Furiosa: A Mad Max Saga", 2024, 4, "Action/Sci-Fi", "George Miller", "Anya Taylor-Joy", "Chris Hemsworth", "Australia"], ["Suspiria", 2018, 4, "Horror", "Luca Guadagnino", "Dakota Johnson", "Tilda Swinton", "Italy"], ["The Maltese Falcon", 1941, 4, "Noir/Crime", "John Huston", "Humphrey Bogart", "Mary Astor", "USA"], ["Raging Bull", 1980, 4, "Drama/Sports", "Martin Scorsese", "Robert De Niro", "Joe Pesci", "USA"], ["Million Dollar Baby", 2004, 4, "Drama/Sports", "Clint Eastwood", "Hilary Swank", "Clint Eastwood", "USA"], ["Unforgiven", 1992, 4, "Western", "Clint Eastwood", "Clint Eastwood", "Gene Hackman", "USA"], ["Escape from New York", 1981, 4, "Action/Sci-Fi", "John Carpenter", "Kurt Russell", "Lee Van Cleef", "USA"], ["Reservoir Dogs", 1992, 4, "Crime", "Quentin Tarantino", "Harvey Keitel", "Tim Roth", "USA"], ["Challengers", 2024, 4, "Drama/Sports", "Luca Guadagnino", "Zendaya", "Josh O'Connor", "USA"], ["The Terminator", 1984, 4.0, "Action/Sci-Fi", "James Cameron", "Arnold Schwarzenegger", "Linda Hamilton", "USA"], ["Civil War", 2024, 4, "Action/Drama", "Alex Garland", "Kirsten Dunst", "Wagner Moura", "USA"], ["Notorious", 1946, 4, "Thriller/Romance", "Alfred Hitchcock", "Cary Grant", "Ingrid Bergman", "USA"], ["Home Alone", 1990, 4, "Comedy/Family", "Chris Columbus", "Macaulay Culkin", "Joe Pesci", "USA"], ["Indiana Jones and the Temple of Doom", 1984, 4, "Adventure/Action", "Steven Spielberg", "Harrison Ford", "Kate Capshaw", "USA"], ["The Lord of the Rings: The Two Towers", 2002, 4, "Fantasy/Adventure", "Peter Jackson", "Elijah Wood", "Viggo Mortensen", "New Zealand"], ["Luca", 2021, 4, "Animation/Family", "Enrico Casarosa", "Jacob Tremblay", "Jack Dylan Grazer", "USA"], ["Birds of Prey (and the Fantabulous Emancipation of One Harley Quinn)", 2020, 4, "Action/Comedy", "Cathy Yan", "Margot Robbie", "Mary Elizabeth Winstead", "USA"], ["Blade II", 2002, 4, "Action/Horror", "Guillermo del Toro", "Wesley Snipes", "Kris Kristofferson", "USA"], ["Your Name.", 2016, 4, "Animation/Romance", "Makoto Shinkai", "Ryûnosuke Kamiki", "Mone Kamishiraishi", "Japan"], ["Zodiac", 2007, 4, "Crime/Thriller", "David Fincher", "Jake Gyllenhaal", "Robert Downey Jr.", "USA"], ["The Mummy", 1999, 4, "Adventure/Fantasy", "Stephen Sommers", "Brendan Fraser", "Rachel Weisz", "USA"], ["The Matrix Reloaded", 2003, 4, "Action/Sci-Fi", "Lana Wachowski", "Keanu Reeves", "Carrie-Anne Moss", "USA"], ["The Matrix", 1999, 4, "Action/Sci-Fi", "Lana Wachowski", "Keanu Reeves", "Laurence Fishburne", "USA"], ["Independence Day", 1996, 4, "Sci-Fi/Action", "Roland Emmerich", "Will Smith", "Jeff Goldblum", "USA"], ["Interstellar", 2014, 4, "Sci-Fi/Drama", "Christopher Nolan", "Matthew McConaughey", "Anne Hathaway", "USA"], ["John Wick", 2014, 4, "Action", "Chad Stahelski", "Keanu Reeves", "Michael Nyqvist", "USA"], ["Air Force One", 1997, 4, "Action/Thriller", "Wolfgang Petersen", "Harrison Ford", "Gary Oldman", "USA"], ["Up", 2009, 4, "Animation/Family", "Pete Docter", "Ed Asner", "Jordan Nagai", "USA"], ["Planet of the Apes", 1968, 4, "Sci-Fi", "Franklin J. Schaffner", "Charlton Heston", "Roddy McDowall", "USA"], ["Once", 2007, 4, "Musical/Drama", "John Carney", "Glen Hansard", "Markéta Irglová", "Ireland"], ["Dune: Part Two", 2024, 4, "Sci-Fi", "Denis Villeneuve", "Timothée Chalamet", "Zendaya", "USA"], ["War of the Worlds", 2005, 4, "Sci-Fi/Action", "Steven Spielberg", "Tom Cruise", "Dakota Fanning", "USA"], ["Hacksaw Ridge", 2016, 4, "War/Drama", "Mel Gibson", "Andrew Garfield", "Sam Worthington", "USA"], ["Midsommar", 2019, 4, "Horror", "Ari Aster", "Florence Pugh", "Jack Reynor", "USA"], ["Marriage Story", 2019, 4, "Drama", "Noah Baumbach", "Adam Driver", "Scarlett Johansson", "USA"], ["The Banshees of Inisherin", 2022, 4, "Comedy/Drama", "Martin McDonagh", "Colin Farrell", "Brendan Gleeson", "Ireland"], ["Sibyl", 2019, 4, "Drama/Thriller", "Justine Triet", "Virginie Efira", "Adèle Exarchopoulos", "France"], ["American Fiction", 2023, 4, "Comedy/Drama", "Cord Jefferson", "Jeffrey Wright", "Tracee Ellis Ross", "USA"], ["When Evil Lurks", 2023, 4, "Horror", "Demián Rugna", "Ezequiel Rodríguez", "Demián Salomón", "Argentina"], ["The Trial", 1962, 4, "Drama", "Orson Welles", "Anthony Perkins", "Jeanne Moreau", "France"], ["Poor Things", 2023, 4, "Comedy/Sci-Fi", "Yorgos Lanthimos", "Emma Stone", "Mark Ruffalo", "UK"], ["The Sting", 1973, 4, "Crime/Comedy", "George Roy Hill", "Paul Newman", "Robert Redford", "USA"], ["The Silence of the Lambs", 1991, 4, "Thriller/Horror", "Jonathan Demme", "Jodie Foster", "Anthony Hopkins", "USA"], ["Rocky", 1976, 4, "Drama/Sports", "John G. Avildsen", "Sylvester Stallone", "Talia Shire", "USA"], ["The Exorcist", 1973, 4, "Horror", "William Friedkin", "Ellen Burstyn", "Linda Blair", "USA"], ["Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb", 1964, 4, "Comedy/War", "Stanley Kubrick", "Peter Sellers", "George C. Scott", "UK"], ["The Night of the Hunter", 1955, 4, "Thriller/Noir", "Charles Laughton", "Robert Mitchum", "Shelley Winters", "USA"]];
+
+const CATALOG_ALL = [["Flags of Our Fathers", 2006, "War/Drama", "Clint Eastwood", "Ryan Phillippe", "Jesse Bradford", "USA", 132, 7.1, "Eastwood mirando la Segunda Guerra desde el mismo lugar humano y sobrio que Mystic River."], ["Annette", 2021, "Musical/Drama", "Leos Carax", "Adam Driver", "Marion Cotillard", "France", 141, 6.6, "Un musical delirante de Sparks y Carax, para cuando quieras algo tan extraño como Holy Motors."], ["Holy Motors", 2012, "Fantasy/Drama", "Leos Carax", "Denis Lavant", "Edith Scob", "France", 115, 7.4, "Cine francés psicológico llevado al extremo surrealista, puro Carax."], ["The Lovers on the Bridge", 1991, "Romance/Drama", "Leos Carax", "Juliette Binoche", "Denis Lavant", "France", 125, 7.9, "Romance callejero y visualmente arrebatado, el otro gran Carax."], ["The Godfather Part III", 1990, "Crime/Drama", "Francis Ford Coppola", "Al Pacino", "Andy Garcia", "USA", 162, 7.1, "Para cerrar la saga que ya amas con Brando y Pacino."], ["Roma", 2018, "Drama", "Alfonso Cuarón", "Yalitza Aparicio", "Marina de Tavira", "Mexico", 135, 7.7, "Drama íntimo en blanco y negro, con la textura visual que tanto disfrutas en el cine europeo."], ["Blade Runner 2049", 2017, "Sci-Fi/Noir", "Denis Villeneuve", "Ryan Gosling", "Harrison Ford", "USA", 164, 8.0, "Neo-noir de ciencia ficción con la atmósfera lenta y visual que conecta con tu gusto por Hitchcock."], ["The Last Picture Show", 1971, "Drama", "Peter Bogdanovich", "Timothy Bottoms", "Jeff Bridges", "USA", 118, 7.9, "Nostalgia americana en blanco y negro, hermana espiritual de East of Eden."], ["The Towering Inferno", 1974, "Action/Thriller", "John Guillermin", "Steve McQueen", "Paul Newman", "USA", 165, 7.0, "Cine catástrofe clásico de los 70, para tu lado más palomitero setentero."], ["The Wild Bunch", 1969, "Western", "Sam Peckinpah", "William Holden", "Ernest Borgnine", "USA", 145, 7.9, "Western violento y elegíaco, ideal si te gustó The Searchers."], ["All Good Things", 2010, "Crime/Drama", "Andrew Jarecki", "Ryan Gosling", "Kirsten Dunst", "USA", 101, 6.5, "Crimen real con tensión matrimonial, cerca de tu gusto por Gone Girl."], ["Office Space", 1999, "Comedy", "Mike Judge", "Ron Livingston", "Jennifer Aniston", "USA", 89, 7.6, "Comedia de cubículo icónica, para una noche liviana."], ["Always Be My Maybe", 2019, "Romance/Comedy", "Nahnatchka Khan", "Ali Wong", "Randall Park", "USA", 102, 6.7, "Rom-com moderna si quieres algo ligero entre tanto thriller."], ["The Loft", 2014, "Thriller", "Erik Van Looy", "Karl Urban", "James Marsden", "USA", 108, 6.4, "Thriller de secretos entre amigos, tono parecido a Sleeping with the Enemy."], ["In Bed with Victoria", 2016, "Comedy/Drama", "Justine Triet", "Virginie Efira", "Vincent Lacoste", "France", 95, 7.0, "Otra de Justine Triet, la directora de Anatomy of a Fall y Sibyl."], ["Somewhere in Time", 1980, "Romance/Fantasy", "Jeannot Szwarc", "Christopher Reeve", "Jane Seymour", "USA", 103, 6.9, "Romance de fantasía clásico, para tu lado más Ghost."], ["Ford v Ferrari", 2019, "Drama/Sports", "James Mangold", "Matt Damon", "Christian Bale", "USA", 152, 8.1, "Drama de carreras con carisma de estrella, digno sucesor de Rocky."], ["Cowboys & Aliens", 2011, "Sci-Fi/Western", "Jon Favreau", "Daniel Craig", "Harrison Ford", "USA", 119, 6.2, "Mezcla de western y ciencia ficción, un capricho de género."], ["The Fighter", 2010, "Drama/Sports", "David O. Russell", "Mark Wahlberg", "Christian Bale", "USA", 116, 7.8, "Otro drama de boxeo real, hermano de Raging Bull."], ["Incendies", 2010, "Drama/Mystery", "Denis Villeneuve", "Lubna Azabal", "Mélissa Désormeaux-Poulin", "Canada", 131, 8.2, "Drama devastador de Villeneuve, antes de Dune."], ["The Road", 2009, "Drama/Sci-Fi", "John Hillcoat", "Viggo Mortensen", "Kodi Smit-McPhee", "USA", 111, 7.3, "Post-apocalipsis desolador, muy alejado de tus blockbusters pero potente."], ["Watchmen", 2009, "Action/Sci-Fi", "Zack Snyder", "Jackie Earle Haley", "Patrick Wilson", "USA", 162, 7.6, "Superhéroes oscuros y adultos, en la línea moral gris de Batman Returns."], ["Gran Torino", 2008, "Drama", "Clint Eastwood", "Clint Eastwood", "Bee Vang", "USA", 116, 8.2, "Eastwood en modo gruñón redentor, tono cercano a Unforgiven."], ["Tropic Thunder", 2008, "Comedy/Action", "Ben Stiller", "Ben Stiller", "Robert Downey Jr.", "USA", 107, 7.0, "Comedia de Hollywood parodiando el propio Hollywood."], ["I Am Legend", 2007, "Sci-Fi/Horror", "Francis Lawrence", "Will Smith", "Alice Braga", "USA", 101, 7.2, "Apocalipsis viral con Will Smith, para tu lado más de género."], ["Branded to Kill", 1967, "Crime/Noir", "Seijun Suzuki", "Joe Shishido", "Mariko Ogawa", "Japan", 91, 7.6, "Noir japonés surrealista y estilizado, joya de culto."], ["Akira", 1988, "Animation/Sci-Fi", "Katsuhiro Otomo", "Mitsuo Iwata", "Nozomu Sasaki", "Japan", 124, 8.0, "El anime cyberpunk fundacional, si te gustó Your Name. súbele la intensidad."], ["Saturday Night Fever", 1977, "Drama/Musical", "John Badham", "John Travolta", "Karen Lynn Gorney", "USA", 118, 6.8, "Travolta bailando en los 70, previo a su etapa Tarantino."], ["A.I. Artificial Intelligence", 2001, "Sci-Fi/Drama", "Steven Spielberg", "Haley Joel Osment", "Jude Law", "USA", 146, 7.2, "Spielberg + Kubrick (guion original suyo), melancolía futurista."], ["JFK", 1991, "Thriller/Drama", "Oliver Stone", "Kevin Costner", "Gary Oldman", "USA", 189, 8.0, "Thriller político-conspirativo, Costner otra vez tras The Untouchables."], ["The Perfect Storm", 2000, "Drama/Adventure", "Wolfgang Petersen", "George Clooney", "Mark Wahlberg", "USA", 130, 6.4, "Drama de supervivencia marítima, tensión pura."], ["Signs", 2002, "Sci-Fi/Thriller", "M. Night Shyamalan", "Mel Gibson", "Joaquin Phoenix", "USA", 106, 7.0, "Shyamalan de nuevo, el director de The Sixth Sense que ya amas."], ["The Ghost and Mrs. Muir", 1947, "Romance/Fantasy", "Joseph L. Mankiewicz", "Gene Tierney", "Rex Harrison", "USA", 104, 7.8, "Romance fantasmal clásico de Hollywood dorado."], ["Stage Door", 1937, "Comedy/Drama", "Gregory La Cava", "Katharine Hepburn", "Ginger Rogers", "USA", 92, 7.8, "Comedia coral de Hollywood clásico, ritmo screwball."], ["Cursed", 2005, "Horror", "Wes Craven", "Christina Ricci", "Joshua Jackson", "USA", 97, 4.9, "Craven en modo hombre-lobo, más flojo pero curioso para completistas."], ["Escape from L.A.", 1996, "Action/Sci-Fi", "John Carpenter", "Kurt Russell", "Stacy Keach", "USA", 101, 5.8, "Secuela de Escape from New York, mismo Carpenter/Russell."], ["The Adventures of Tintin", 2011, "Animation/Adventure", "Steven Spielberg", "Jamie Bell", "Andy Serkis", "USA", 107, 7.3, "Aventura animada de Spielberg, muy Indiana Jones."], ["1492: Conquest of Paradise", 1992, "Drama/Adventure", "Ridley Scott", "Gérard Depardieu", "Sigourney Weaver", "UK", 154, 6.4, "Épica histórica de Ridley Scott con banda sonora inolvidable de Vangelis."], ["Leave Her to Heaven", 1945, "Noir/Drama", "John M. Stahl", "Gene Tierney", "Cornel Wilde", "USA", 110, 7.7, "Noir en Technicolor, con una de las villanas más frías del cine clásico."], ["Bring Me the Head of Alfredo Garcia", 1974, "Crime/Western", "Sam Peckinpah", "Warren Oates", "Isela Vega", "USA", 112, 7.2, "Peckinpah crudo y desquiciado, para tu lado más western violento."], ["The Piano Teacher", 2001, "Drama", "Michael Haneke", "Isabelle Huppert", "Benoît Magimel", "France", 131, 7.7, "Drama psicológico incomodísimo, Haneke en su punto más filoso."], ["The Secret of My Success", 1987, "Comedy", "Herbert Ross", "Michael J. Fox", "Helen Slater", "USA", 110, 6.3, "Comedia ochentera con Michael J. Fox, aire Back to the Future."], ["The NeverEnding Story", 1984, "Fantasy/Family", "Wolfgang Petersen", "Noah Hathaway", "Barret Oliver", "West Germany", 102, 7.4, "Fantasía ochentera entrañable."], ["Moonstruck", 1987, "Romance/Comedy", "Norman Jewison", "Cher", "Nicolas Cage", "USA", 102, 7.3, "Comedia romántica ítalo-americana encantadora."], ["Léon: The Professional", 1994, "Crime/Drama", "Luc Besson", "Jean Reno", "Natalie Portman", "France", 110, 8.5, "Thriller de acción francés con corazón, referencia directa que citó Obsession (2025)."], ["Easy Rider", 1969, "Drama/Adventure", "Dennis Hopper", "Peter Fonda", "Dennis Hopper", "USA", 95, 7.3, "Road movie contracultural de los 60, ícono del Nuevo Hollywood."], ["Personal Shopper", 2016, "Thriller/Drama", "Olivier Assayas", "Kristen Stewart", "Lars Eidinger", "France", 105, 6.5, "Thriller fantasmal francés, ambiguo y elegante."], ["All the President's Men", 1976, "Thriller/Drama", "Alan J. Pakula", "Robert Redford", "Dustin Hoffman", "USA", 138, 7.9, "El mismo Pakula de Klute, thriller político seminal."], ["The Pelican Brief", 1993, "Thriller", "Alan J. Pakula", "Julia Roberts", "Denzel Washington", "USA", 141, 6.6, "Thriller legal-político, otra de Pakula."], ["Charlie Wilson's War", 2007, "Comedy/Drama", "Mike Nichols", "Tom Hanks", "Julia Roberts", "USA", 97, 6.9, "Comedia política de Mike Nichols, el director de The Graduate."], ["Rain Man", 1988, "Drama", "Barry Levinson", "Dustin Hoffman", "Tom Cruise", "USA", 134, 8.0, "Drama de hermanos ganador del Oscar, con un Hoffman inolvidable."], ["Thirteen Days", 2000, "Thriller/Drama", "Roger Donaldson", "Kevin Costner", "Bruce Greenwood", "USA", 145, 7.3, "Crisis de los misiles cubanos, thriller político tenso."], ["A Ghost Story", 2017, "Drama/Fantasy", "David Lowery", "Casey Affleck", "Rooney Mara", "USA", 92, 7.0, "Drama contemplativo sobre el duelo, minimalista y extraño."], ["Paris, Texas", 1984, "Drama", "Wim Wenders", "Harry Dean Stanton", "Nastassja Kinski", "West Germany", 145, 8.1, "Road movie melancólico, joya del cine europeo en América."], ["Rock of Ages", 2012, "Musical/Comedy", "Adam Shankman", "Julianne Hough", "Diego Boneta", "USA", 123, 5.6, "Musical jukebox ochentero para una noche sin pretensiones."], ["New York, New York", 1977, "Musical/Drama", "Martin Scorsese", "Liza Minnelli", "Robert De Niro", "USA", 163, 6.7, "Scorsese haciendo musical con De Niro, curiosidad dentro de su filmografía."], ["11.22.63", 2016, "Drama/Sci-Fi", "Kevin Macdonald", "James Franco", "Sarah Gadon", "USA", 480, 7.6, "Miniserie de viajes en el tiempo basada en Stephen King."], ["Philadelphia", 1993, "Drama", "Jonathan Demme", "Tom Hanks", "Denzel Washington", "USA", 125, 7.7, "El mismo Demme de The Silence of the Lambs, en registro dramático."], ["The Insider", 1999, "Drama/Thriller", "Michael Mann", "Russell Crowe", "Al Pacino", "USA", 157, 7.9, "Thriller corporativo de Michael Mann, el director de Heat."], ["The Lost Boys", 1987, "Horror/Comedy", "Joel Schumacher", "Jason Patric", "Corey Haim", "USA", 97, 7.3, "Vampiros ochenteros con estética MTV, muy en la línea de Dracula."], ["The Merchant of Venice", 2004, "Drama", "Michael Radford", "Al Pacino", "Jeremy Irons", "UK", 131, 7.0, "Shakespeare con Pacino en modo Shylock."], ["Bell, Book and Candle", 1958, "Romance/Fantasy", "Richard Quine", "James Stewart", "Kim Novak", "USA", 106, 7.0, "Stewart y Novak reunidos justo después de Vertigo."], ["The Great Gatsby", 2013, "Drama/Romance", "Baz Luhrmann", "Leonardo DiCaprio", "Carey Mulligan", "USA", 143, 7.2, "DiCaprio en modo lujo y tragedia, muy visual."], ["Eyes Wide Shut", 1999, "Drama/Mystery", "Stanley Kubrick", "Tom Cruise", "Nicole Kidman", "USA", 159, 7.5, "El último Kubrick, tan hipnótico como The Shining pero en clave onírico-sexual."], ["Grace of Monaco", 2014, "Drama/Biography", "Olivier Dahan", "Nicole Kidman", "Tim Roth", "France", 103, 4.4, "Biopic de Grace Kelly, curiosidad para fans de Rear Window."], ["The Green Mile", 1999, "Drama/Fantasy", "Frank Darabont", "Tom Hanks", "Michael Clarke Duncan", "USA", 189, 8.6, "Drama carcelario con toque sobrenatural, de los más queridos de los 90."], ["Cinema Paradiso", 1988, "Drama/Romance", "Giuseppe Tornatore", "Philippe Noiret", "Salvatore Cascio", "Italy", 155, 8.5, "Una carta de amor al cine mismo, imprescindible para cualquier cinéfilo."], ["Apocalypse Now", 1979, "War/Drama", "Francis Ford Coppola", "Martin Sheen", "Marlon Brando", "USA", 147, 8.4, "Coppola llevando la guerra al delirio total, con Brando otra vez."], ["Silence", 2016, "Drama/History", "Martin Scorsese", "Andrew Garfield", "Adam Driver", "USA", 161, 7.1, "Scorsese en registro espiritual, muy distinto a GoodFellas pero igual de personal."], ["Gangs of New York", 2002, "Crime/Drama", "Martin Scorsese", "Leonardo DiCaprio", "Daniel Day-Lewis", "USA", 167, 7.5, "Scorsese y DiCaprio, antes de The Wolf of Wall Street."], ["Julie & Julia", 2009, "Comedy/Drama", "Nora Ephron", "Meryl Streep", "Amy Adams", "USA", 123, 7.0, "Comedia dramática de Nora Ephron, la de When Harry Met Sally."], ["An Affair to Remember", 1957, "Romance/Drama", "Leo McCarey", "Cary Grant", "Deborah Kerr", "USA", 115, 7.7, "El romance clásico que inspiró tantos otros, con Cary Grant en su mejor faceta romántica."], ["Melissa P.", 2005, "Drama", "Luca Guadagnino", "María Valverde", "Geraldine Chaplin", "Italy", 100, 5.7, "Guadagnino antes de Challengers, drama sensual europeo."], ["Sex and Lucía", 2001, "Drama/Romance", "Julio Medem", "Paz Vega", "Tristán Ulloa", "Spain", 128, 6.9, "Drama romántico español entrelazado y sensual."], ["Shame", 2011, "Drama", "Steve McQueen", "Michael Fassbender", "Carey Mulligan", "UK", 101, 7.2, "Drama crudo sobre adicción, del director de 12 Years a Slave."], ["Frankie and Johnny", 1991, "Romance/Drama", "Garry Marshall", "Al Pacino", "Michelle Pfeiffer", "USA", 118, 6.6, "Romance agridulce con Pacino y Pfeiffer."], ["The Seventh Seal", 1957, "Drama", "Ingmar Bergman", "Max von Sydow", "Bengt Ekerot", "Sweden", 96, 8.1, "La partida de ajedrez con la Muerte, cima del cine europeo existencialista."], ["Silkwood", 1983, "Drama", "Mike Nichols", "Meryl Streep", "Kurt Russell", "USA", 131, 7.2, "Drama basado en hechos reales, con Streep en gran forma."], ["Revenge", 2017, "Horror/Action", "Coralie Fargeat", "Matilda Lutton", "Kevin Janssens", "France", 108, 6.9, "Fargeat antes de The Substance, rape-revenge estilizado y feroz."], ["Love and the Frenchwoman", 1960, "Comedy/Drama", "Various directors", "Martine Carol", "François Périer", "France", 117, 6.5, "Antología francesa clásica sobre el amor en distintas etapas."], ["Therese and Isabelle", 1968, "Drama/Romance", "Radley Metzger", "Essy Persson", "Anna Gaël", "France", 102, 6.3, "Drama romántico europeo de época, discreto y sensible."], ["Four Weddings and a Funeral", 1994, "Romance/Comedy", "Mike Newell", "Hugh Grant", "Andie MacDowell", "UK", 117, 7.1, "La rom-com británica que definió el género en los 90."], ["Dick Tracy", 1990, "Action/Crime", "Warren Beatty", "Warren Beatty", "Madonna", "USA", 105, 6.4, "Cómic llevado a pantalla con estética pop, cercano a Batman Returns."], ["Nymphomaniac: Vol. I", 2013, "Drama", "Lars von Trier", "Charlotte Gainsbourg", "Stellan Skarsgård", "Denmark", 117, 7.0, "Von Trier crudo y provocador, el mismo de Melancholia."], ["The Black Belly of the Tarantula", 1971, "Giallo/Thriller", "Paolo Cavara", "Giancarlo Giannini", "Claudine Auger", "Italy", 93, 6.8, "Giallo clásico italiano, hermano de Deep Red."], ["The Rapture", 1991, "Drama/Thriller", "Michael Tolkin", "Mimi Rogers", "David Duchovny", "USA", 100, 6.7, "Thriller espiritual perturbador, poco conocido pero potente."], ["Babylon", 2022, "Drama/Comedy", "Damien Chazelle", "Margot Robbie", "Brad Pitt", "USA", 189, 7.2, "Chazelle celebrando y destruyendo el viejo Hollywood, caótico y ambicioso."], ["8½", 1963, "Drama", "Federico Fellini", "Marcello Mastroianni", "Claudia Cardinale", "Italy", 138, 8.0, "Fellini en su cima autoral, cercano a La Dolce Vita."], ["A Room with a View", 1986, "Romance/Drama", "James Ivory", "Helena Bonham Carter", "Julian Sands", "UK", 117, 7.4, "Romance de época británico, elegante y luminoso."], ["Snatch", 2000, "Crime/Comedy", "Guy Ritchie", "Jason Statham", "Brad Pitt", "UK", 102, 7.8, "Crimen coral británico con humor negro filoso."], ["The Player", 1992, "Comedy/Drama", "Robert Altman", "Tim Robbins", "Greta Scacchi", "USA", 124, 7.5, "Sátira de Hollywood filmada por dentro, mordaz e inteligente."], ["The Bedroom Window", 1987, "Thriller", "Curtis Hanson", "Steve Guttenberg", "Isabelle Huppert", "USA", 112, 6.3, "Thriller hitchcockiano de los 80, homenaje directo a Rear Window."], ["Fleshtone", 1994, "Drama/Thriller", "Karen Kaia Livers", "Kevin Anderson", "Diane Lane", "USA", 97, 5.9, "Thriller erótico noventero, poco visto pero curioso."], ["A Man Escaped", 1956, "Drama/War", "Robert Bresson", "François Leterrier", "Charles Le Clainche", "France", 99, 8.2, "Bresson en su modo más minimalista y tenso, un escape carcelario contado con precisión quirúrgica."], ["Bram Stoker's Dracula", 1992, "Horror/Romance", "Francis Ford Coppola", "Gary Oldman", "Winona Ryder", "USA", 128, 7.4, "Coppola reinventando a Drácula, visualmente exuberante."], ["Forbidden Planet", 1956, "Sci-Fi", "Fred M. Wilcox", "Walter Pidgeon", "Anne Francis", "USA", 98, 7.5, "Ciencia ficción clásica de los 50, influencia directa de Star Wars."], ["Love Lies Bleeding", 2024, "Thriller/Crime", "Rose Glass", "Kristen Stewart", "Katy O'Brian", "UK", 104, 7.0, "Thriller noir moderno, pulp y visceral."], ["Apartment 7A", 2024, "Horror", "Natalie Erika James", "Julia Garner", "Dianne Wiest", "USA", 107, 6.0, "Precuela de Rosemary's Baby, terror psicológico neoyorquino."], ["Braveheart", 1995, "Action/Drama", "Mel Gibson", "Mel Gibson", "Sophie Marceau", "USA", 178, 8.3, "Épica histórica ganadora del Oscar, Gibson dirigiendo y actuando."], ["Armand", 2024, "Drama", "Halfdan Ullmann Tondel", "Renate Reinsve", "Ellen Dorrit Petersen", "Norway", 117, 6.3, "Drama noruego con Renate Reinsve, la protagonista de The Worst Person in the World."], ["The Red Shoes", 1948, "Drama/Musical", "Michael Powell", "Moira Shearer", "Anton Walbrook", "UK", 134, 8.1, "Ballet y obsesión artística en Technicolor deslumbrante."], ["Trainspotting", 1996, "Drama/Comedy", "Danny Boyle", "Ewan McGregor", "Ewen Bremner", "UK", 93, 8.1, "Retrato crudo y estilizado de la adicción en Edimburgo."], ["Maelström", 2000, "Drama/Fantasy", "Denis Villeneuve", "Marie-Josée Croze", "Jean-Nicolas Verreault", "Canada", 88, 7.1, "Villeneuve temprano, extraño y narrado por un pez."], ["Little Gloria... Happy at Last", 1982, "Drama", "Waris Hussein", "Angela Lansbury", "Bette Davis", "USA", 250, 7.4, "Miniserie de época con reparto de leyenda."], ["Fascination", 1979, "Horror", "Jean Rollin", "Brigitte Lahaie", "Franca Maï", "France", 82, 6.8, "Otro Jean Rollin, terror gótico-erótico francés de culto."], ["Notes on a Scandal", 2006, "Drama/Thriller", "Richard Eyre", "Judi Dench", "Cate Blanchett", "UK", 92, 7.5, "Thriller psicológico entre dos mujeres, tenso y elegante."], ["Wrath of Man", 2021, "Action/Crime", "Guy Ritchie", "Jason Statham", "Josh Hartnett", "USA", 119, 7.1, "Ritchie y Statham otra vez, más serio que Snatch."], ["The Countess", 2009, "Horror/Drama", "Julie Delpy", "Julie Delpy", "Daniel Brühl", "France", 94, 5.7, "La leyenda de Erzsébet Báthory, gótico y sangriento."], ["The Cook, the Thief, His Wife & Her Lover", 1989, "Drama", "Peter Greenaway", "Richard Bohringer", "Michael Gambon", "UK", 124, 7.5, "Greenaway en su modo más provocador y visualmente barroco."], ["Caligula", 1979, "Drama/History", "Tinto Brass", "Malcolm McDowell", "Teresa Ann Savoy", "Italy", 156, 4.5, "Épica romana escandalosa, curiosidad histórica del cine transgresor."], ["Hussy", 1980, "Drama/Romance", "Matthew Chapman", "Helen Mirren", "John Shea", "UK", 94, 5.8, "Drama romántico británico poco conocido, con una joven Helen Mirren."], ["Harvey", 1950, "Comedy/Fantasy", "Henry Koster", "James Stewart", "Josephine Hull", "USA", 104, 8.0, "Comedia entrañable de Stewart con un conejo invisible de por medio."], ["Anatomy of a Murder", 1959, "Drama/Crime", "Otto Preminger", "James Stewart", "Lee Remick", "USA", 161, 8.1, "Drama judicial de Preminger, el mismo de Laura."], ["Dodsworth", 1936, "Drama/Romance", "William Wyler", "Walter Huston", "Ruth Chatterton", "USA", 101, 7.8, "Wyler temprano, drama matrimonial elegante."], ["To Die For", 1995, "Comedy/Drama", "Gus Van Sant", "Nicole Kidman", "Matt Dillon", "USA", 106, 6.9, "Sátira mediática afilada con una Kidman despiadada."], ["The Wild One", 1953, "Drama", "László Benedek", "Marlon Brando", "Mary Murphy", "USA", 79, 6.7, "Brando motociclista, ícono rebelde previo a On the Waterfront."], ["Inside Deep Throat", 2005, "Documentary", "Fenton Bailey", "Gerard Damiano", "Linda Lovelace", "USA", 92, 6.6, "Documental sobre el escándalo cultural de los 70."], ["Our Friend", 2019, "Drama", "Gabriela Cowperthwaite", "Dakota Johnson", "Casey Affleck", "USA", 124, 7.2, "Drama sobre amistad y enfermedad, sentido sin caer en el golpe bajo."], ["High and Low", 1963, "Crime/Thriller", "Akira Kurosawa", "Toshiro Mifune", "Tatsuya Nakadai", "Japan", 143, 8.4, "Kurosawa en modo thriller policial, tan preciso como Seven Samurai."], ["Ikiru", 1952, "Drama", "Akira Kurosawa", "Takashi Shimura", "Nobuo Kaneko", "Japan", 143, 8.3, "Otro Kurosawa esencial, íntimo y devastador."], ["Irma la Douce", 1963, "Comedy/Romance", "Billy Wilder", "Jack Lemmon", "Shirley MacLaine", "USA", 147, 7.3, "Otro Wilder con Lemmon y MacLaine, en la línea de The Apartment."], ["Judy", 2019, "Drama/Music", "Rupert Goold", "Renée Zellweger", "Jessie Buckley", "UK", 118, 7.0, "Biopic de Judy Garland, la niña de The Wizard of Oz ya adulta."], ["Dinner at Eight", 1933, "Comedy/Drama", "George Cukor", "Marie Dressler", "John Barrymore", "USA", 111, 7.7, "Comedia coral de Hollywood dorado, dirigida por Cukor."], ["Empire of Dreams: The Story of the Star Wars Trilogy", 2004, "Documentary", "Edith Becker", "George Lucas", "Harrison Ford", "USA", 120, 8.0, "Documental sobre la creación de Star Wars, que ya tienes puntuada alto."], ["The Bad and the Beautiful", 1952, "Drama", "Vincente Minnelli", "Lana Turner", "Kirk Douglas", "USA", 118, 7.9, "Melodrama sobre Hollywood, del director de An American in Paris."], ["Meet Me in St. Louis", 1944, "Musical/Family", "Vincente Minnelli", "Judy Garland", "Margaret O'Brien", "USA", 113, 7.6, "Musical familiar clásico con Judy Garland."], ["Blue Moon", 2025, "Drama/Music", "Richard Linklater", "Ethan Hawke", "Margaret Qualley", "USA", 100, 7.1, "Linklater retratando una noche en la vida de Lorenz Hart."], ["The Misfits", 1961, "Drama/Western", "John Huston", "Clark Gable", "Marilyn Monroe", "USA", 125, 7.4, "La última película de Gable y Monroe, western melancólico."], ["Monkey Business", 1952, "Comedy", "Howard Hawks", "Cary Grant", "Ginger Rogers", "USA", 97, 7.1, "Comedia alocada de Hawks con Cary Grant."], ["Still Screaming: The Ultimate Scary Movie Retrospective", 2011, "Documentary", "Peter M. Kershaw", "Wes Craven", "Neve Campbell", "USA", 90, 7.5, "Documental sobre la saga Scream, que ya conoces y amas."], ["Detour", 1945, "Noir", "Edgar G. Ulmer", "Tom Neal", "Ann Savage", "USA", 68, 7.7, "Noir serie B mínimo y fatalista, joya de bajo presupuesto."], ["Criss Cross", 1949, "Noir/Crime", "Robert Siodmak", "Burt Lancaster", "Yvonne De Carlo", "USA", 88, 7.6, "Noir clásico de dobles cruces y fatalismo."], ["Human Desire", 1954, "Noir/Drama", "Fritz Lang", "Glenn Ford", "Gloria Grahame", "USA", 90, 7.1, "Otro Fritz Lang, el mismo de The Big Heat."], ["The Faculty", 1998, "Horror/Sci-Fi", "Robert Rodriguez", "Elijah Wood", "Josh Hartnett", "USA", 104, 6.5, "Terror adolescente con guion de Kevin Williamson, el de Scream."], ["In a Lonely Place", 1950, "Noir/Drama", "Nicholas Ray", "Humphrey Bogart", "Gloria Grahame", "USA", 94, 7.9, "Noir psicológico con Bogart, del director de Rebel Without a Cause."], ["Saving Mr. Banks", 2013, "Drama/Comedy", "John Lee Hancock", "Emma Thompson", "Tom Hanks", "USA", 125, 7.5, "La historia detrás de Mary Poppins, que ya amas."], ["Dead Men Don't Wear Plaid", 1982, "Comedy/Noir", "Carl Reiner", "Steve Martin", "Rachel Ward", "USA", 89, 6.9, "Comedia que homenajea el noir clásico con montaje de archivo."], ["How to Marry a Millionaire", 1953, "Comedy/Romance", "Jean Negulesco", "Marilyn Monroe", "Lauren Bacall", "USA", 96, 7.0, "Comedia romántica clásica con Monroe y Bacall juntas."], ["The Killers", 1964, "Noir/Crime", "Don Siegel", "Lee Marvin", "Angie Dickinson", "USA", 95, 7.1, "Remake noir del cuento de Hemingway, con Reagan de villano."], ["Richard Jewell", 2019, "Drama", "Clint Eastwood", "Paul Walter Hauser", "Sam Rockwell", "USA", 131, 7.5, "Eastwood otra vez, drama basado en hechos reales."], ["Becoming Cary Grant", 2017, "Documentary", "Mark Kidel", "Cary Grant", "", "France", 85, 7.3, "Documental sobre Cary Grant, tu galán recurrente de Hitchcock."], ["A Simple Plan", 1998, "Crime/Thriller", "Sam Raimi", "Bill Paxton", "Billy Bob Thornton", "USA", 121, 7.5, "Raimi en modo dramático serio, muy alejado de Spider-Man."], ["On Golden Pond", 1981, "Drama", "Mark Rydell", "Katharine Hepburn", "Henry Fonda", "USA", 109, 7.5, "Drama familiar con dos leyendas del cine clásico."], ["James Dean", 2001, "Drama/Biography", "Mark Rydell", "James Franco", "Michael Moriarty", "USA", 95, 6.8, "Biopic sobre el propio James Dean, tu ídolo de East of Eden."], ["Age of Consent", 1969, "Drama/Comedy", "Michael Powell", "James Mason", "Helen Mirren", "Australia", 98, 6.8, "Powell tardío, con una jovencísima Helen Mirren."], ["The Bird with the Crystal Plumage", 1970, "Giallo/Thriller", "Dario Argento", "Tony Musante", "Suzy Kendall", "Italy", 96, 7.4, "El giallo debut de Argento, antecesor directo de Deep Red."], ["House of Wax", 1953, "Horror", "André de Toth", "Vincent Price", "Phyllis Kirk", "USA", 90, 7.2, "Terror clásico en 3D con Vincent Price."], ["The Fly", 1958, "Horror/Sci-Fi", "Kurt Neumann", "David Hedison", "Patricia Owens", "USA", 94, 7.1, "El terror de transformación original, antes del remake de Cronenberg."], ["House on Haunted Hill", 1959, "Horror", "William Castle", "Vincent Price", "Carol Ohmart", "USA", 75, 7.3, "Terror de casa embrujada con Vincent Price, puro placer clase B."], ["The Stranger", 2025, "Thriller", "Ana Piterbarg", "", "", "Argentina", 98, 6.5, "Thriller argentino reciente, en la línea de Nine Queens."], ["28 Years Later", 2025, "Horror/Sci-Fi", "Danny Boyle", "Jodie Comer", "Aaron Taylor-Johnson", "UK", 115, 7.3, "Boyle retomando su saga de zombis post-apocalípticos."], ["Jason and the Argonauts", 1963, "Fantasy/Adventure", "Don Chaffey", "Todd Armstrong", "Nancy Kovack", "UK", 104, 7.7, "Fantasía mitológica con efectos stop-motion de Ray Harryhausen."], ["L.A. Confidential", 1997, "Crime/Noir", "Curtis Hanson", "Russell Crowe", "Kevin Spacey", "USA", 138, 8.2, "Neo-noir de Los Ángeles, heredero directo de Chinatown y el noir clásico."], ["Bitter Moon", 1992, "Drama/Thriller", "Roman Polanski", "Hugh Grant", "Kristin Scott Thomas", "France", 139, 7.1, "Polanski en modo perverso y teatral."], ["The Firm", 1993, "Thriller/Drama", "Sydney Pollack", "Tom Cruise", "Gene Hackman", "USA", 154, 7.0, "Thriller legal-corporativo con Cruise joven."], ["Paper Moon", 1973, "Comedy/Drama", "Peter Bogdanovich", "Ryan O'Neal", "Tatum O'Neal", "USA", 102, 7.9, "Comedia dramática en blanco y negro, entrañable y con humor seco."], ["Primal Fear", 1996, "Thriller/Crime", "Gregory Hoblit", "Richard Gere", "Edward Norton", "USA", 130, 7.7, "Thriller judicial con un giro final memorable."], ["Hero", 2002, "Action/Drama", "Zhang Yimou", "Jet Li", "Tony Leung", "China", 99, 7.9, "Wuxia visualmente deslumbrante, el Rashomon de las artes marciales."], ["The Assassination of Jesse James by the Coward Robert Ford", 2007, "Western/Drama", "Andrew Dominik", "Brad Pitt", "Casey Affleck", "USA", 160, 7.6, "Western contemplativo y elegíaco, muy distinto al western clásico pero igual de mítico."], ["The Double Life of Véronique", 1991, "Drama/Fantasy", "Krzysztof Kieślowski", "Irène Jacob", "Irène Jacob", "France", 98, 7.9, "Kieślowski en su modo más onírico y visualmente hipnótico."], ["Ran", 1985, "War/Drama", "Akira Kurosawa", "Tatsuya Nakadai", "Akira Terao", "Japan", 162, 8.2, "Kurosawa adaptando El Rey Lear a escala épica, tan grandioso como Seven Samurai."], ["Twins of Evil", 1971, "Horror", "John Hough", "Peter Cushing", "Madeleine Collinson", "UK", 87, 6.4, "Terror gótico de la Hammer con Peter Cushing, tono cercano a Dracula."], ["Vampyros Lesbos", 1971, "Horror", "Jesús Franco", "Soledad Miranda", "Ewa Strömberg", "Spain", 89, 6.1, "Terror erótico europeo de culto, muy en la onda de tu gusto giallo."], ["Marathon Man", 1976, "Thriller", "John Schlesinger", "Dustin Hoffman", "Laurence Olivier", "USA", 125, 7.6, "El mismo Schlesinger de Midnight Cowboy, thriller de tensión brutal."], ["'Tis Pity She's a Whore", 1971, "Drama", "Giuseppe Patroni Griffi", "Charlotte Rampling", "Oliver Tobias", "Italy", 104, 6.3, "Drama de época transgresor con Charlotte Rampling."], ["Maîtresse", 1976, "Drama", "Barbet Schroeder", "Gérard Depardieu", "Bulle Ogier", "France", 112, 6.9, "Drama francés provocador, del director de Single White Female."], ["Cat on a Hot Tin Roof", 1958, "Drama", "Richard Brooks", "Elizabeth Taylor", "Paul Newman", "USA", 108, 7.9, "Drama tenso de Tennessee Williams con Taylor y Newman en su mejor momento."], ["Paranoia", 1969, "Thriller", "Umberto Lenzi", "Carroll Baker", "Jean Sorel", "Italy", 90, 6.5, "Giallo temprano de Lenzi, atmósfera setentera perversa."], ["Perceval", 1978, "Adventure/Fantasy", "Éric Rohmer", "Fabrice Luchini", "André Dussollier", "France", 138, 6.9, "Rohmer en clave medieval, experimento visual único."], ["The Marquise of O", 1976, "Drama", "Éric Rohmer", "Edith Clever", "Bruno Ganz", "West Germany", 107, 7.5, "Otro Rohmer de época, elegante y preciso."], ["The Mother and the Whore", 1973, "Drama", "Jean Eustache", "Jean-Pierre Léaud", "Bernadette Lafont", "France", 219, 7.9, "Cima del cine francés post-Nouvelle Vague, largo pero hipnótico."], ["The Hand That Rocks the Cradle", 1992, "Thriller", "Curtis Hanson", "Annabella Sciorra", "Rebecca De Mornay", "USA", 110, 6.9, "Thriller doméstico noventero, tenso como Sleeping with the Enemy."], ["The Mercenary", 1968, "Western", "Sergio Corbucci", "Franco Nero", "Tony Musante", "Italy", 112, 7.4, "Spaghetti western de Corbucci, en la línea de Sergio Leone."], ["Electra Glide in Blue", 1973, "Drama", "James William Guercio", "Robert Blake", "Billy Green Bush", "USA", 113, 7.2, "Drama de motociclistas setentero, poco conocido pero de culto."], ["The Band Wagon", 1953, "Musical/Comedy", "Vincente Minnelli", "Fred Astaire", "Cyd Charisse", "USA", 112, 7.7, "Musical clásico de Minnelli con Fred Astaire en gran forma."], ["Gigi", 1958, "Musical/Romance", "Vincente Minnelli", "Leslie Caron", "Maurice Chevalier", "USA", 115, 7.2, "Musical parisino ganador del Oscar."], ["Things Change", 1988, "Comedy/Crime", "David Mamet", "Don Ameche", "Joe Mantegna", "USA", 100, 6.9, "Comedia de mafia de Mamet, ingeniosa y poco vista."], ["Bellman and True", 1987, "Crime/Drama", "Richard Loncraine", "Bernard Hill", "Kieran O'Brien", "UK", 122, 6.8, "Thriller de atraco británico, tenso y realista."], ["Shakedown", 1988, "Action/Thriller", "James Glickenhaus", "Peter Weller", "Sam Elliott", "USA", 96, 6.2, "Acción policial ochentera de serie B."], ["Death Becomes Her", 1992, "Comedy/Fantasy", "Robert Zemeckis", "Meryl Streep", "Goldie Hawn", "USA", 104, 7.2, "Zemeckis en modo comedia negra fantástica, el mismo de Back to the Future."], ["Spirited Away", 2001, "Animation/Fantasy", "Hayao Miyazaki", "Rumi Hiiragi", "Miyu Irino", "Japan", 125, 8.6, "Animación japonesa cumbre, para expandir tu gusto por Your Name. y Ne Zha."], ["Coraline", 2009, "Animation/Fantasy", "Henry Selick", "Dakota Fanning", "Teri Hatcher", "USA", 100, 7.7, "Animación stop-motion inquietante, para tu lado más oscuro."], ["Klaus", 2019, "Animation/Family", "Sergio Pablos", "Jason Schwartzman", "J.K. Simmons", "Spain", 96, 8.2, "Animación navideña con una técnica visual preciosa."], ["The Grand Budapest Hotel", 2014, "Comedy/Drama", "Wes Anderson", "Ralph Fiennes", "Tony Revolori", "USA", 99, 8.1, "Comedia estilizada de Wes Anderson, visualmente perfecta."], ["Amélie", 2001, "Comedy/Romance", "Jean-Pierre Jeunet", "Audrey Tautou", "Mathieu Kassovitz", "France", 122, 8.3, "Comedia romántica francesa visualmente encantadora."], ["City of God", 2002, "Crime/Drama", "Fernando Meirelles", "Alexandre Rodrigues", "Leandro Firmino", "Brazil", 130, 8.6, "Crimen brasileño feroz y visualmente eléctrico."], ["Pan's Labyrinth", 2006, "Fantasy/Drama", "Guillermo del Toro", "Ivana Baquero", "Sergi López", "Spain", 118, 8.2, "Del Toro en su fantasía más oscura y personal, previo a Frankenstein."], ["Let the Right One In", 2008, "Horror/Drama", "Tomas Alfredson", "Kåre Hedebrant", "Lina Leandersson", "Sweden", 114, 7.9, "Vampiros suecos melancólicos, terror con alma."], ["A Girl Walks Home Alone at Night", 2014, "Horror/Romance", "Ana Lily Amirpour", "Sheila Vand", "Arash Marandi", "USA", 99, 7.0, "Vampiro iraní en blanco y negro, estética giallo con corazón indie."], ["Amadeus", 1984, "Drama/Music", "Milos Forman", "F. Murray Abraham", "Tom Hulce", "USA", 160, 8.4, "El mismo Forman de One Flew Over the Cuckoo's Nest, drama de genio y envidia."], ["Chinatown", 1974, "Noir/Mystery", "Roman Polanski", "Jack Nicholson", "Faye Dunaway", "USA", 130, 8.2, "El noir moderno definitivo, imprescindible si amas Vertigo y Laura."], ["Weekend", 2011, "Romance/Drama", "Andrew Haigh", "Tom Cullen", "Chris New", "UK", 97, 7.6, "Romance íntimo británico, en la línea de The Worst Person in the World."], ["The Skin I Live In", 2011, "Thriller/Drama", "Pedro Almodóvar", "Antonio Banderas", "Elena Anaya", "Spain", 120, 7.6, "Almodóvar en su thriller más retorcido, del director de All About My Mother."], ["Talk to Her", 2002, "Drama", "Pedro Almodóvar", "Javier Cámara", "Darío Grandinetti", "Spain", 112, 8.0, "Otro Almodóvar esencial, delicado y perturbador a la vez."], ["The Handmaiden", 2016, "Thriller/Romance", "Park Chan-wook", "Kim Min-hee", "Kim Tae-ri", "South Korea", 145, 8.1, "Park Chan-wook en su thriller más elegante y retorcido, del director de Oldboy."], ["Train to Busan", 2016, "Horror/Action", "Yeon Sang-ho", "Gong Yoo", "Ma Dong-seok", "South Korea", 118, 7.6, "El zombie coreano que precede a Colony, del mismo Yeon Sang-ho."], ["Burning", 2018, "Drama/Mystery", "Lee Chang-dong", "Yoo Ah-in", "Steven Yeun", "South Korea", 148, 7.5, "Misterio coreano lento y perturbador."], ["The Skin of the Wolf", 2017, "Drama/Thriller", "Samu Fuentes", "Mario Casas", "Irene Escolar", "Spain", 100, 6.7, "Drama español de supervivencia, oscuro y físico."], ["Suspicion", 1941, "Thriller/Romance", "Alfred Hitchcock", "Cary Grant", "Joan Fontaine", "USA", 99, 7.4, "Otro Hitchcock temprano con Cary Grant, tensión matrimonial pura."], ["Dial M for Murder", 1954, "Thriller", "Alfred Hitchcock", "Ray Milland", "Grace Kelly", "USA", 105, 8.2, "Otro Hitchcock con Grace Kelly, el mismo año que Rear Window."], ["Peeping Tom-style: Repulsion", 1965, "Horror/Drama", "Roman Polanski", "Catherine Deneuve", "Ian Hendry", "UK", 105, 7.7, "Polanski temprano, terror psicológico claustrofóbico."], ["The Tenant", 1976, "Horror/Drama", "Roman Polanski", "Roman Polanski", "Isabelle Adjani", "France", 126, 7.4, "Cierre de la trilogía de apartamentos de Polanski junto a Repulsion."], ["Suspiria (1977)", 1977, "Horror", "Dario Argento", "Jessica Harper", "Stefania Casini", "Italy", 99, 7.6, "El giallo-horror original de Argento, previo al remake que ya viste."], ["Tenebrae", 1982, "Giallo/Thriller", "Dario Argento", "Anthony Franciosa", "Giuliano Gemma", "Italy", 101, 7.3, "Otro giallo de Argento, tan estilizado y sangriento como Deep Red."], ["Marnie", 1964, "Thriller/Drama", "Alfred Hitchcock", "Tippi Hedren", "Sean Connery", "USA", 130, 7.2, "Hitchcock explorando el trauma femenino con Connery."], ["The Iron Giant", 1999, "Animation/Sci-Fi", "Brad Bird", "Eli Marienthal", "Jennifer Aniston", "USA", 86, 8.0, "Animación de Brad Bird, el mismo de The Incredibles y Ratatouille."], ["Wallace & Gromit: The Curse of the Were-Rabbit", 2005, "Animation/Comedy", "Nick Park", "Peter Sallis", "Ralph Fiennes", "UK", 85, 7.3, "Stop-motion británico entrañable y muy ingenioso."], ["District 9", 2009, "Sci-Fi/Action", "Neill Blomkamp", "Sharlto Copley", "David James", "South Africa", 112, 7.9, "Ciencia ficción social sudafricana, cruda y original."], ["The Man from Nowhere", 2010, "Action/Thriller", "Lee Jeong-beom", "Won Bin", "Kim Sae-ron", "South Korea", 119, 7.6, "Acción coreana feroz, en la línea de Oldboy."], ["Baby Driver", 2017, "Action/Crime", "Edgar Wright", "Ansel Elgort", "Lily James", "USA", 113, 7.6, "Acción musicalizada al milímetro, de Edgar Wright."], ["The Iron Claw", 2023, "Drama/Sports", "Sean Durkin", "Zac Efron", "Jeremy Allen White", "USA", 130, 7.6, "Drama deportivo devastador, hermano de Raging Bull y Rocky."], ["The Machinist", 2004, "Thriller/Drama", "Brad Anderson", "Christian Bale", "Jennifer Jason Leigh", "Spain", 101, 7.6, "Thriller psicológico angustiante, con un Bale irreconocible."], ["Perfect Blue", 1997, "Animation/Thriller", "Satoshi Kon", "Junko Iwao", "Rica Matsumoto", "Japan", 81, 8.0, "Anime psicológico que influenció a Aronofsky y Nolan, cercano a Mulholland Drive."]];
+
+/* Historial base: tu export de Letterboxd (watched.csv), 1505 películas */
+const BASE_TOTAL = 1505;
+const BASE_DECADES = [[1900, 1], [1920, 7], [1930, 21], [1940, 40], [1950, 52], [1960, 60], [1970, 81], [1980, 115], [1990, 179], [2000, 293], [2010, 366], [2020, 290]];
+
+
+/* Películas vistas que NO estaban en ese export (feed RSS del perfil fmillag).
+   Fila: [título, año, nota, fecha vista, id TMDB]. Para sumar más, agregar filas al final. */
+const SYNC = window.SYNC || {};
+/* Películas vistas que NO estaban en el export. Las agrega solo el sync diario (sync-data.js). Fila: [título, año, nota, fecha vista, id TMDB]. */
+const EXTRA_WATCHED = SYNC.extra_watched || [];
+/* Todo lo que el feed RSS trajo al diario (incluye revisionados). Fila: [título, año, nota, fecha vista, rewatch, id TMDB]. */
+const DIARY_FEED = SYNC.diary || [];
+const TERROR_LIST = [["The Night of the Hunter", 1955, "https://boxd.it/25HW"], ["Black Christmas", 1974, "https://boxd.it/1Js6"], ["Hallow Road", 2025, "https://boxd.it/JKYq"], ["Obsession", 2025, "https://boxd.it/PNqo"], ["The Innocents", 1961, "https://boxd.it/1KeY"], ["Dead of Night", 1945, "https://boxd.it/1PQI"], ["Pet Sematary", 1989, "https://boxd.it/1ZBy"], ["The Witch", 2015, "https://boxd.it/9X0m"], ["The Uninvited", 1944, "https://boxd.it/1KeO"], ["Invasion of the Body Snatchers", 1978, "https://boxd.it/1SWk"], ["Night of the Demon", 1957, "https://boxd.it/1woA"], ["The Wicker Man", 1973, "https://boxd.it/1KnG"], ["The Lost Boys", 1987, "https://boxd.it/28DI"], ["American Psycho", 2000, "https://boxd.it/28Vs"], ["Island of Lost Souls", 1932, "https://boxd.it/25TS"], ["Ring", 1998, "https://boxd.it/26tw"], ["The Bad Seed", 1956, "https://boxd.it/XuI"], ["Hereditary", 2018, "https://boxd.it/hNVe"], ["Bram Stoker's Dracula", 1992, "https://boxd.it/223a"], ["Signs", 2002, "https://boxd.it/26t2"], ["Evil Dead", 2013, "https://boxd.it/3GPq"], ["Psycho", 1960, "https://boxd.it/2ab2"], ["It Follows", 2014, "https://boxd.it/87wo"], ["Re-Animator", 1985, "https://boxd.it/28hM"], ["Paranormal Activity", 2007, "https://boxd.it/1yIM"], ["Prince of Darkness", 1987, "https://boxd.it/1ZKq"], ["The Stepfather", 1987, "https://boxd.it/1wii"], ["The Texas Chainsaw Massacre 2", 1986, "https://boxd.it/1Kk8"], ["The Changeling", 1980, "https://boxd.it/1PVy"], ["The Day the Earth Stood Still", 1951, "https://boxd.it/29w4"], ["Evil Dead Burn", 2026, "https://boxd.it/K1R2"]];
+const TERROR_SEEN_DIARY = {"black christmas|1974": "2026-10-03", "hallow road|2025": "2026-10-11", "obsession|2025": "2026-10-01", "invasion of the body snatchers|1978": "2026-10-15", "the wicker man|1973": "2026-10-10", "island of lost souls|1932": "2026-10-13", "ring|1998": "2026-10-02", "evil dead|2013": "2026-10-16", "psycho|1960": "2026-10-05", "paranormal activity|2007": "2026-10-04", "prince of darkness|1987": "2026-10-11", "the stepfather|1987": "2026-10-07", "the day the earth stood still|1951": "2026-10-10"}; // películas de la lista vistas en octubre 2026 según tu diario (al 2026-10-16)
+const Y26 = [
+  ["Catch Me If You Can", 2002, 4.0, "2026-01-02", 0, "Steven Spielberg", "Leonardo DiCaprio", "Crime/Drama"],
+  ["Wake Up Dead Man", 2025, 2.5, "2026-01-05", 0, "Rian Johnson", "Daniel Craig", "Mystery/Crime"],
+  ["East of Eden", 1955, 4.5, "2026-01-09", 0, "Elia Kazan", "James Dean", "Drama"],
+  ["Niagara", 1953, 4.0, "2026-01-09", 0, "Henry Hathaway", "Marilyn Monroe", "Noir/Thriller"],
+  ["Scream", 1996, 4.0, "2026-01-10", 0, "Wes Craven", "Neve Campbell", "Horror"],
+  ["The Housemaid", 2025, 3.5, "2026-01-10", 0, "Paul Feig", "Sydney Sweeney", "Thriller/Mystery"],
+  ["Scream 3", 2000, 2.0, "2026-01-13", 0, "Wes Craven", "Neve Campbell", "Horror"],
+  ["Cape Fear", 1962, 4.0, "2026-01-16", 0, "J. Lee Thompson", "Gregory Peck", "Thriller"],
+  ["Getting LOST", 2024, null, "2026-01-16", 0, "", "", "Documentary"],
+  ["The Town", 2010, 4.0, "2026-01-17", 0, "Ben Affleck", "Ben Affleck", "Crime/Drama"],
+  ["Die Hard", 1988, 4.0, "2026-01-23", 0, "John McTiernan", "Bruce Willis", "Action"],
+  ["The Last Boy Scout", 1991, 4.0, "2026-01-24", 0, "Tony Scott", "Bruce Willis", "Action"],
+  ["The Letter", 1940, 3.5, "2026-01-24", 0, "William Wyler", "Bette Davis", "Drama/Noir"],
+  ["KPop Demon Hunters", 2025, 3.0, "2026-01-25", 0, "Maggie Kang", "Arden Cho", "Animation/Fantasy"],
+  ["Drag Me to Hell", 2009, 4.5, "2026-01-26", 0, "Sam Raimi", "Alison Lohman", "Horror"],
+  ["The Jungle Book", 1967, 3.0, "2026-01-27", 0, "Wolfgang Reitherman", "Phil Harris", "Animation/Family"],
+  ["Send Help", 2026, 3.0, "2026-01-29", 0, "Sam Raimi", "Rachel McAdams", "Horror/Comedy"],
+  ["Star Wars: Episode I – The Phantom Menace", 1999, 3.0, "2026-01-30", 0, "George Lucas", "Liam Neeson", "Sci-Fi/Adventure"],
+  ["Star Wars: Episode II – Attack of the Clones", 2002, 2.5, "2026-02-02", 0, "George Lucas", "Hayden Christensen", "Sci-Fi/Adventure"],
+  ["Star Wars: Episode III – Revenge of the Sith", 2005, 3.0, "2026-02-02", 0, "George Lucas", "Ewan McGregor", "Sci-Fi/Adventure"],
+  ["The Guilty", 2021, 3.0, "2026-02-04", 0, "Antoine Fuqua", "Jake Gyllenhaal", "Thriller/Crime"],
+  ["John Q", 2002, 3.0, "2026-02-04", 0, "Nick Cassavetes", "Denzel Washington", "Drama/Thriller"],
+  ["The Man Who Knew Too Much", 1956, 3.5, "2026-02-05", 0, "Alfred Hitchcock", "James Stewart", "Thriller"],
+  ["All Too Well: The Short Film", 2021, 4.0, "2026-02-06", 0, "Taylor Swift", "Sadie Sink", "Drama/Music"],
+  ["Marty Supreme", 2025, 4.0, "2026-02-07", 0, "Josh Safdie", "Timothée Chalamet", "Drama/Comedy"],
+  ["Misery", 1990, 4.0, "2026-02-10", 0, "Rob Reiner", "James Caan", "Thriller"],
+  ["Zootopia 2", 2025, 3.5, "2026-02-12", 0, "Byron Howard", "Ginnifer Goodwin", "Animation/Comedy"],
+  ["Don't Breathe", 2016, 4.0, "2026-02-16", 0, "Fede Álvarez", "Jane Levy", "Horror/Thriller"],
+  ["Superman", 2025, 2.5, "2026-02-17", 1, "James Gunn", "David Corenswet", "Action/Sci-Fi"],
+  ["Midnight Cowboy", 1969, 5.0, "2026-02-19", 0, "John Schlesinger", "Dustin Hoffman", "Drama"],
+  ["Casino Royale", 2006, 5.0, "2026-02-20", 0, "Martin Campbell", "Daniel Craig", "Action/Thriller"],
+  ["Top Secret!", 1984, 3.5, "2026-02-21", 0, "Jim Abrahams", "Val Kilmer", "Comedy"],
+  ["Through the Looking Glass", 1976, 3.5, "2026-02-23", 0, "Jonas Middleton", "Catharine Burgess", "Drama"],
+  ["The Kid", 1921, 4.0, "2026-02-24", 0, "Charlie Chaplin", "Charlie Chaplin", "Comedy/Drama"],
+  ["Kill Bill: The Whole Bloody Affair", 2004, 5.0, "2026-02-25", 0, "Quentin Tarantino", "Uma Thurman", "Action"],
+  ["Sentimental Value", 2025, 4.0, "2026-02-28", 1, "Joachim Trier", "Renate Reinsve", "Drama"],
+  ["Mannequin", 1987, 2.0, "2026-03-01", 0, "Michael Gottlieb", "Andrew McCarthy", "Comedy/Romance"],
+  ["Häxan", 1922, 4.0, "2026-03-01", 0, "Benjamin Christensen", "Maren Pedersen", "Documentary/Horror"],
+  ["Sherlock Jr.", 1924, 3.5, "2026-03-04", 0, "Buster Keaton", "Buster Keaton", "Comedy"],
+  ["Scream 4", 2011, 4.0, "2026-03-05", 0, "Wes Craven", "Neve Campbell", "Horror"],
+  ["Scream 7", 2026, 3.5, "2026-03-05", 0, "Kevin Williamson", "Neve Campbell", "Horror"],
+  ["The Secret Agent", 2025, 4.0, "2026-03-06", 0, "Kleber Mendonça Filho", "Wagner Moura", "Drama/Thriller"],
+  ["F1", 2025, 3.5, "2026-03-07", 1, "Joseph Kosinski", "Brad Pitt", "Action/Drama"],
+  ["Toy Story 4", 2019, 2.5, "2026-03-08", 0, "Josh Cooley", "Tom Hanks", "Animation/Family"],
+  ["The Invisible Man", 1933, 4.0, "2026-03-09", 0, "James Whale", "Claude Rains", "Horror/Sci-Fi"],
+  ["Train Dreams", 2025, 4.0, "2026-03-14", 0, "Clint Bentley", "Joel Edgerton", "Drama"],
+  ["No Other Choice", 2025, 4.0, "2026-03-16", 0, "Park Chan-wook", "Lee Byung-hun", "Thriller/Drama"],
+  ["24×36", 2016, 3.5, "2026-03-17", 0, "Kevin Burke", "", "Documentary"],
+  ["The Lost Daughter", 2021, 4.5, "2026-03-18", 0, "Maggie Gyllenhaal", "Olivia Colman", "Drama"],
+  ["RoboCop", 1987, 4.0, "2026-03-21", 0, "Paul Verhoeven", "Peter Weller", "Action/Sci-Fi"],
+  ["Phantom Thread", 2017, 4.0, "2026-03-21", 0, "Paul Thomas Anderson", "Daniel Day-Lewis", "Drama/Romance"],
+  ["The Revenant", 2015, 4.0, "2026-03-22", 0, "Alejandro G. Iñárritu", "Leonardo DiCaprio", "Adventure/Drama"],
+  ["Project Hail Mary", 2026, 3.5, "2026-03-22", 0, "Phil Lord & Christopher Miller", "Ryan Gosling", "Sci-Fi/Adventure"],
+  ["Oldboy", 2003, 4.0, "2026-03-23", 0, "Park Chan-wook", "Choi Min-sik", "Thriller/Action"],
+  ["Mary Poppins", 1964, 5.0, "2026-03-25", 0, "Robert Stevenson", "Julie Andrews", "Family/Musical"],
+  ["Project Hail Mary", 2026, 4.0, "2026-03-27", 1, "Phil Lord & Christopher Miller", "Ryan Gosling", "Sci-Fi/Adventure"],
+  ["When Harry Met Sally...", 1989, 4.0, "2026-03-27", 0, "Rob Reiner", "Billy Crystal", "Romance/Comedy"],
+  ["House by the River", 1950, 3.5, "2026-03-27", 0, "Fritz Lang", "Louis Hayward", "Noir/Thriller"],
+  ["The Big Heat", 1953, 4.0, "2026-03-28", 0, "Fritz Lang", "Glenn Ford", "Noir/Crime"],
+  ["WALL·E", 2008, 4.0, "2026-03-28", 0, "Andrew Stanton", "Ben Burtt", "Animation/Sci-Fi"],
+  ["High Sierra", 1941, 4.0, "2026-03-29", 0, "Raoul Walsh", "Humphrey Bogart", "Crime/Noir"],
+  ["Bogart: Life Comes in Flashes", 2024, 3.5, "2026-03-29", 0, "", "Humphrey Bogart", "Documentary"],
+  ["The Fifth Element", 1997, 3.5, "2026-03-29", 0, "Luc Besson", "Bruce Willis", "Sci-Fi/Action"],
+  ["To Have and Have Not", 1944, 3.5, "2026-03-30", 0, "Howard Hawks", "Humphrey Bogart", "Adventure/Romance"],
+  ["Anaconda", 2025, 2.5, "2026-03-30", 0, "Tom Gormican", "Jack Black", "Comedy/Adventure"],
+  ["The Big Sleep", 1946, 3.5, "2026-04-01", 1, "Howard Hawks", "Humphrey Bogart", "Noir/Crime"],
+  ["Forrest Gump", 1994, 5.0, "2026-04-02", 0, "Robert Zemeckis", "Tom Hanks", "Drama/Comedy"],
+  ["The Lego Movie", 2014, 3.5, "2026-04-03", 0, "Phil Lord & Christopher Miller", "Chris Pratt", "Animation/Comedy"],
+  ["The Treasure of the Sierra Madre", 1948, 4.0, "2026-04-04", 0, "John Huston", "Humphrey Bogart", "Adventure/Drama"],
+  ["Laura", 1944, 4.0, "2026-04-05", 0, "Otto Preminger", "Gene Tierney", "Noir/Mystery"],
+  ["Titanic", 1997, 5.0, "2026-04-05", 1, "James Cameron", "Leonardo DiCaprio", "Romance/Drama"],
+  ["The Simpsons Movie", 2007, 2.5, "2026-04-05", 0, "David Silverman", "Dan Castellaneta", "Animation/Comedy"],
+  ["I Know What You Did Last Summer", 2025, 0.5, "2026-04-08", 0, "Jennifer Kaytin Robinson", "Madelyn Cline", "Horror"],
+  ["Shadow of a Doubt", 1943, 2.0, "2026-04-10", 0, "Alfred Hitchcock", "Teresa Wright", "Thriller/Noir"],
+  ["Splitsville", 2025, 3.5, "2026-04-11", 0, "Michael Angelo Covino", "Adria Arjona", "Comedy"],
+  ["Stand by Me", 1986, 4.5, "2026-04-13", 0, "Rob Reiner", "Wil Wheaton", "Drama/Adventure"],
+  ["To Catch a Thief", 1955, 3.5, "2026-04-14", 0, "Alfred Hitchcock", "Cary Grant", "Thriller/Romance"],
+  ["The Drama", 2026, 4.0, "2026-04-17", 0, "Kristoffer Borgli", "Zendaya", "Romance/Comedy"],
+  ["The Night Porter", 1974, 3.0, "2026-04-17", 0, "Liliana Cavani", "Dirk Bogarde", "Drama"],
+  ["Porky's", 1981, 2.0, "2026-04-18", 0, "Bob Clark", "Dan Monahan", "Comedy"],
+  ["The Super Mario Bros. Movie", 2023, 3.0, "2026-04-18", 0, "Aaron Horvath", "Chris Pratt", "Animation/Family"],
+  ["Kiss Me Deadly", 1955, 4.0, "2026-04-19", 0, "Robert Aldrich", "Ralph Meeker", "Noir"],
+  ["The Naked Gun", 2025, 3.5, "2026-04-20", 0, "Akiva Schaffer", "Liam Neeson", "Comedy"],
+  ["Ghost", 1990, 4.0, "2026-04-21", 0, "Jerry Zucker", "Patrick Swayze", "Romance/Fantasy"],
+  ["The Queen", 2006, 3.5, "2026-04-23", 0, "Stephen Frears", "Helen Mirren", "Drama"],
+  ["Sorcerer", 1977, 4.0, "2026-04-25", 0, "William Friedkin", "Roy Scheider", "Thriller/Adventure"],
+  ["Deep Red", 1975, 4.0, "2026-04-25", 0, "Dario Argento", "David Hemmings", "Giallo/Horror"],
+  ["Bugonia", 2025, 4.0, "2026-04-25", 1, "Yorgos Lanthimos", "Emma Stone", "Sci-Fi/Comedy"],
+  ["Case Closed: Zero the Enforcer", 2018, 3.0, "2026-04-26", 0, "Susumu Mitsunaka", "Minami Takayama", "Animation/Mystery"],
+  ["Sleeping with the Enemy", 1991, 4.0, "2026-04-26", 0, "Joseph Ruben", "Julia Roberts", "Thriller"],
+  ["Fast Five", 2011, 3.5, "2026-04-26", 0, "Justin Lin", "Vin Diesel", "Action"],
+  ["Nine Queens", 2000, 4.0, "2026-04-29", 0, "Fabián Bielinsky", "Ricardo Darín", "Crime/Thriller"],
+  ["Saw", 2004, 3.0, "2026-04-30", 0, "James Wan", "Cary Elwes", "Horror/Thriller"],
+  ["Once Upon a Time... in Hollywood", 2019, 5.0, "2026-05-01", 1, "Quentin Tarantino", "Leonardo DiCaprio", "Comedy/Drama"],
+  ["The Fabelmans", 2022, 4.5, "2026-05-01", 0, "Steven Spielberg", "Gabriel LaBelle", "Drama"],
+  ["This Is It", 2009, 3.5, "2026-05-02", 0, "Kenny Ortega", "Michael Jackson", "Documentary/Music"],
+  ["Michael Jackson's Thriller", 1983, 5.0, "2026-05-02", 0, "John Landis", "Michael Jackson", "Music"],
+  ["Michael", 2026, 3.0, "2026-05-02", 0, "Antoine Fuqua", "Jaafar Jackson", "Drama/Music"],
+  ["Under the Sand", 2000, 4.5, "2026-05-04", 1, "François Ozon", "Charlotte Rampling", "Drama"],
+  ["The Vanishing", 1988, 3.5, "2026-05-08", 0, "George Sluizer", "Bernard-Pierre Donnadieu", "Thriller"],
+  ["Mortal Kombat II", 2026, 2.0, "2026-05-09", 0, "Simon McQuoid", "Karl Urban", "Action/Fantasy"],
+  ["The Lord of the Rings: The Fellowship of the Ring", 2001, 4.5, "2026-05-10", 0, "Peter Jackson", "Elijah Wood", "Fantasy/Adventure"],
+  ["Swimming Pool", 2003, 4.0, "2026-05-11", 1, "François Ozon", "Charlotte Rampling", "Thriller/Drama"],
+  ["Top Gun: Maverick", 2022, 3.5, "2026-05-13", 0, "Joseph Kosinski", "Tom Cruise", "Action/Drama"],
+  ["Hitch", 2005, 3.5, "2026-05-15", 0, "Andy Tennant", "Will Smith", "Comedy/Romance"],
+  ["Five Times Two", 2004, 3.0, "2026-05-16", 1, "François Ozon", "Valeria Bruni Tedeschi", "Drama"],
+  ["The Long Walk", 2025, 3.0, "2026-05-17", 0, "Francis Lawrence", "Cooper Hoffman", "Horror/Thriller"],
+  ["Five Times Two", 2004, 3.5, "2026-05-18", 1, "François Ozon", "Valeria Bruni Tedeschi", "Drama"],
+  ["Jurassic World", 2015, 2.0, "2026-05-20", 0, "Colin Trevorrow", "Chris Pratt", "Sci-Fi/Adventure"],
+  ["In the House", 2012, 4.0, "2026-05-23", 0, "François Ozon", "Fabrice Luchini", "Drama/Thriller"],
+  ["In the House", 2012, 4.0, "2026-05-26", 1, "François Ozon", "Fabrice Luchini", "Drama/Thriller"],
+  ["Homo Argentum", 2025, 3.0, "2026-05-27", 0, "Mariano Cohn", "Guillermo Francella", "Comedy"],
+  ["Out of the Past", 1947, 3.0, "2026-06-06", 0, "Jacques Tourneur", "Robert Mitchum", "Noir"],
+  ["The Postman Always Rings Twice", 1946, 4.0, "2026-06-18", 0, "Tay Garnett", "Lana Turner", "Noir/Drama"],
+  ["Dead of Winter", 2025, 2.0, "2026-06-19", 0, "Brian Kirk", "Emma Thompson", "Thriller"],
+  ["Toy Story", 1995, 5.0, "2026-06-19", 1, "John Lasseter", "Tom Hanks", "Animation/Family"],
+  ["The Super Mario Galaxy Movie", 2026, 2.5, "2026-06-20", 0, "Aaron Horvath", "Chris Pratt", "Animation/Family"],
+  ["Disclosure Day", 2026, 3.5, "2026-06-21", 0, "Steven Spielberg", "Emily Blunt", "Sci-Fi/Thriller"],
+  ["Insomnia", 2002, 3.5, "2026-06-23", 0, "Christopher Nolan", "Al Pacino", "Thriller/Crime"],
+  ["Backrooms", 2026, 3.0, "2026-06-28", 0, "Kane Parsons", "Chiwetel Ejiofor", "Horror"],
+  ["The Mandalorian and Grogu", 2026, 3.0, "2026-06-28", 1, "Jon Favreau", "Pedro Pascal", "Sci-Fi/Adventure"],
+  ["A Few Good Men", 1992, 4.0, "2026-07-02", 0, "Rob Reiner", "Tom Cruise", "Drama"],
+  ["Blade Runner", 1982, 3.0, "2026-07-03", 0, "Ridley Scott", "Harrison Ford", "Sci-Fi/Noir"],
+  ["Bringing Up Baby", 1938, 4.0, "2026-07-04", 0, "Howard Hawks", "Katharine Hepburn", "Comedy"],
+  ["Rebel Without a Cause", 1955, 4.0, "2026-07-04", 0, "Nicholas Ray", "James Dean", "Drama"],
+  ["Masters of the Universe", 2026, 2.5, "2026-07-04", 0, "Travis Knight", "Nicholas Galitzine", "Fantasy/Action"],
+  ["The Sheep Detectives", 2026, 3.5, "2026-07-04", 0, "Kyle Balda", "Hugh Jackman", "Comedy/Mystery"],
+  ["Obsession", 2025, 4.0, "2026-07-05", 0, "Curry Barker", "Michael Johnston", "Horror"],
+  ["A Few Good Men", 1992, 4.0, "2026-07-05", 1, "Rob Reiner", "Tom Cruise", "Drama"],
+  ["Jumanji", 1995, 3.5, "2026-07-06", 0, "Joe Johnston", "Robin Williams", "Adventure/Fantasy"],
+  ["The Invite", 2026, 4.0, "2026-07-09", 0, "Olivia Wilde", "Seth Rogen", "Comedy/Drama"],
+  ["The Truth", 1960, 3.0, "2026-07-12", 0, "Henri-Georges Clouzot", "Brigitte Bardot", "Drama"],
+  ["Borat: Cultural Learnings of America for Make Benefit Glorious Nation of Kazakhstan", 2006, 3.0, "2026-07-12", 0, "Larry Charles", "Sacha Baron Cohen", "Comedy"],
+  ["The Earrings of Madame de...", 1953, 4.0, "2026-07-14", 0, "Max Ophüls", "Danielle Darrieux", "Drama/Romance"],
+  ["The Murderer Lives at Number 21", 1942, 4.0, "2026-07-16", 0, "Henri-Georges Clouzot", "Pierre Fresnay", "Crime/Comedy"],
+  ["The Wages of Fear", 1953, 5.0, "2026-07-16", 0, "Henri-Georges Clouzot", "Yves Montand", "Thriller/Adventure"],
+  ["Spider-Man 2", 2004, 4.0, "2026-07-16", 0, "Sam Raimi", "Tobey Maguire", "Action/Adventure"],
+  ["Mamma Mia!", 2008, 3.0, "2026-07-16", 0, "Phyllida Lloyd", "Meryl Streep", "Musical/Comedy"],
+  ["Spider-Man: Homecoming", 2017, 3.0, "2026-07-17", 0, "Jon Watts", "Tom Holland", "Action/Adventure"],
+  ["The Odyssey", 2026, 5.0, "2026-07-18", 0, "Christopher Nolan", "Matt Damon", "Adventure/Drama"],
+  ["Le Corbeau", 1943, 4.0, "2026-07-19", 0, "Henri-Georges Clouzot", "Pierre Fresnay", "Drama/Thriller"],
+  ["Batman: Under the Red Hood", 2010, 4.0, "2026-07-19", 0, "Brandon Vietti", "Bruce Greenwood", "Animation/Action"],
+  ["...And Justice for All", 1979, 2.0, "2026-07-20", 0, "Norman Jewison", "Al Pacino", "Drama"],
+  ["Jenny Lamour", 1947, 4.0, "2026-07-22", 0, "Henri-Georges Clouzot", "Louis Jouvet", "Crime/Noir"],
+  ["Diabolique", 1955, 5.0, "2026-07-24", 1, "Henri-Georges Clouzot", "Simone Signoret", "Thriller"],
+  ["Bambi", 1942, 4.0, "2026-07-24", 0, "David Hand", "Hardie Albright", "Animation/Family"],
+  ["Woman in Chains", 1968, 3.5, "2026-07-25", 0, "", "", "Drama"],
+  ["The Wages of Fear", 1953, 5.0, "2026-07-26", 1, "Henri-Georges Clouzot", "Yves Montand", "Thriller/Adventure"],
+  ["Sorcerer", 1977, 4.5, "2026-07-26", 1, "William Friedkin", "Roy Scheider", "Thriller/Adventure"],
+  ["The Verdict", 1982, 4.0, "2026-07-28", 0, "Sidney Lumet", "Paul Newman", "Drama"],
+  ["The Odyssey", 2026, 5.0, "2026-07-31", 1, "Christopher Nolan", "Matt Damon", "Adventure/Drama"],
+  ["Spider-Man: Far From Home", 2019, 2.0, "2026-07-31", 0, "Jon Watts", "Tom Holland", "Action/Adventure"],
+  ["Love in the Afternoon", 1972, 4.0, "2026-08-01", 0, "Éric Rohmer", "Bernard Verley", "Drama/Romance"],
+  ["Spider-Man: No Way Home", 2021, 2.5, "2026-08-02", 1, "Jon Watts", "Tom Holland", "Action/Adventure"],
+  ["La Collectionneuse", 1967, 3.0, "2026-08-06", 0, "Éric Rohmer", "Haydée Politoff", "Drama/Romance"],
+  ["My Night at Maud's", 1969, 3.5, "2026-08-07", 0, "Éric Rohmer", "Jean-Louis Trintignant", "Drama/Romance"],
+  ["Claire's Knee", 1970, 4.0, "2026-08-08", 0, "Éric Rohmer", "Jean-Claude Brialy", "Drama/Romance"],
+  ["Toy Story 5", 2026, 3.0, "2026-08-08", 0, "Andrew Stanton", "Tom Hanks", "Animation/Family"],
+  ["The Aviator's Wife", 1981, 4.0, "2026-08-09", 0, "Éric Rohmer", "Philippe Marlaud", "Comedy/Drama"],
+  ["Flesh Gordon", 1974, 2.0, "2026-08-09", 0, "Michael Benveniste", "Jason Williams", "Comedy/Sci-Fi"],
+  ["The Devil Wears Prada 2", 2026, 2.0, "2026-08-09", 0, "David Frankel", "Meryl Streep", "Comedy"],
+  ["Women in Love", 1969, 3.5, "2026-08-13", 0, "Ken Russell", "Alan Bates", "Drama/Romance"],
+  ["North by Northwest", 1959, 5.0, "2026-08-13", 1, "Alfred Hitchcock", "Cary Grant", "Thriller"],
+  ["The Ox-Bow Incident", 1943, 4.5, "2026-08-15", 0, "William A. Wellman", "Henry Fonda", "Western"],
+  ["The Night of the Hunted", 1980, 2.5, "2026-08-15", 0, "Jean Rollin", "Brigitte Lahaie", "Horror"],
+  ["Pauline at the Beach", 1983, 3.5, "2026-08-16", 1, "Éric Rohmer", "Amanda Langlet", "Comedy/Romance"],
+  ["Spider-Man: Brand New Day", 2026, 4.0, "2026-08-16", 0, "Destin Daniel Cretton", "Tom Holland", "Action/Adventure"],
+  ["The Devils", 1971, 5.0, "2026-08-18", 0, "Ken Russell", "Oliver Reed", "Horror/Drama"],
+  ["Insidious: Out of the Further", 2026, 3.0, "2026-08-19", 0, "", "Lin Shaye", "Horror"],
+  ["Alucarda", 1977, 3.0, "2026-08-19", 0, "Juan López Moctezuma", "Tina Romero", "Horror"],
+  ["The Grapes of Death", 1978, 4.0, "2026-08-21", 0, "Jean Rollin", "Marie-Georges Pascal", "Horror"],
+  ["Journey to the Center of the Earth", 2008, 2.0, "2026-08-22", 0, "Eric Brevig", "Brendan Fraser", "Adventure/Fantasy"],
+  ["The Green Ray", 1986, 2.5, "2026-08-24", 0, "Éric Rohmer", "Marie Rivière", "Drama/Romance"],
+  ["Mutiny", 2026, 3.0, "2026-08-25", 1, "Jean-François Richet", "Jason Statham", "Action/Thriller"],
+  ["Fuze", 2025, 1.5, "2026-08-26", 0, "David Mackenzie", "Aaron Taylor-Johnson", "Thriller/Action"],
+  ["Is God Is", 2026, 4.0, "2026-08-27", 0, "Aleshea Harris", "Kara Young", "Drama/Thriller"],
+  ["Looney Tunes: Back in Action", 2003, 3.5, "2026-08-28", 0, "Joe Dante", "Brendan Fraser", "Comedy/Animation"],
+  ["The Sixth Sense", 1999, 4.5, "2026-08-30", 0, "M. Night Shyamalan", "Bruce Willis", "Thriller/Drama"],
+  ["Boyfriends and Girlfriends", 1987, 3.5, "2026-08-31", 0, "Éric Rohmer", "Emmanuelle Chaulet", "Comedy/Romance"],
+  ["Coyote vs. Acme", 2026, 3.5, "2026-09-02", 0, "Dave Green", "Will Forte", "Comedy/Animation"],
+  ["Armageddon", 1998, 3.0, "2026-09-02", 1, "Michael Bay", "Bruce Willis", "Action/Sci-Fi"],
+  ["Colony", 2026, 4.0, "2026-09-04", 0, "Yeon Sang-ho", "Jun Ji-hyun", "Horror/Action"],
+  ["The Terminator", 1984, 4.0, "2026-09-05", 1, "James Cameron", "Arnold Schwarzenegger", "Action/Sci-Fi"],
+  ["Halloween", 2018, 2.0, "2026-09-05", 0, "David Gordon Green", "Jamie Lee Curtis", "Horror"],
+  ["Terminator 2: Judgment Day", 1991, 4.5, "2026-09-07", 1, "James Cameron", "Arnold Schwarzenegger", "Action/Sci-Fi"],
+  ["Blood and Roses", 1960, 3.0, "2026-09-08", 0, "Roger Vadim", "Mel Ferrer", "Horror/Romance"],
+  ["Over the Hedge", 2006, 2.5, "2026-09-08", 0, "Tim Johnson", "Bruce Willis", "Animation/Comedy"],
+  ["102 Minutes That Changed America", 2008, 3.0, "2026-09-11", 0, "", "", "Documentary"],
+  ["Looper", 2012, 3.5, "2026-09-11", 0, "Rian Johnson", "Joseph Gordon-Levitt", "Sci-Fi/Action"],
+  ["A Tale of Winter", 1992, 3.0, "2026-09-14", 0, "Éric Rohmer", "Charlotte Véry", "Drama/Romance"],
+  ["Dua Lipa: Live from Mexico", 2026, 4.0, "2026-09-15", 0, "", "Dua Lipa", "Music"],
+  ["Elle", 2016, 3.5, "2026-09-19", 0, "Paul Verhoeven", "Isabelle Huppert", "Thriller/Drama"],
+  ["A Summer's Tale", 1996, 3.5, "2026-09-21", 0, "Éric Rohmer", "Melvil Poupaud", "Comedy/Romance"],
+  ["Back to the Future", 1985, 5.0, "2026-09-24", 1, "Robert Zemeckis", "Michael J. Fox", "Sci-Fi/Comedy"],
+  ["Obsession", 2025, 5.0, "2026-10-01", 1, "Curry Barker", "Michael Johnston", "Horror"],
+  ["Digger", 2026, 3.5, "2026-10-02", 0, "Alejandro G. Iñárritu", "Tom Cruise", "Action/Thriller"],
+  ["Ring", 1998, 2.5, "2026-10-02", 0, "Hideo Nakata", "Nanako Matsushima", "Horror"],
+  ["Black Christmas", 1974, 4.0, "2026-10-03", 1, "Bob Clark", "Olivia Hussey", "Horror"],
+  ["Paranormal Activity", 2007, 3.5, "2026-10-04", 0, "Oren Peli", "Katie Featherston", "Horror"],
+  ["The Graduate", 1967, 5.0, "2026-10-05", 0, "Mike Nichols", "Dustin Hoffman", "Comedy/Drama"],
+  ["In the Master's Shadow: Hitchcock's Legacy", 2008, 4.0, "2026-10-05", 0, "Gary Leva", "", "Documentary"],
+  ["Psycho", 1960, 5.0, "2026-10-05", 1, "Alfred Hitchcock", "Anthony Perkins", "Horror/Thriller"],
+  ["The Stepfather", 1987, 2.5, "2026-10-07", 0, "Joseph Ruben", "Terry O'Quinn", "Horror/Thriller"],
+  ["Lara Croft: Tomb Raider", 2001, 2.5, "2026-10-07", 0, "Simon West", "Angelina Jolie", "Action/Adventure"],
+  ["The Day the Earth Stood Still", 1951, 4.0, "2026-10-10", 0, "Robert Wise", "Michael Rennie", "Sci-Fi"],
+  ["The Wicker Man", 1973, 3.0, "2026-10-10", 0, "Robin Hardy", "Edward Woodward", "Horror/Mystery"],
+  ["Hallow Road", 2025, 3.5, "2026-10-11", 0, "Babak Anvari", "Rosamund Pike", "Horror/Thriller"],
+  ["Prince of Darkness", 1987, 4.0, "2026-10-11", 0, "John Carpenter", "Donald Pleasence", "Horror"],
+  ["Cleaner", 2025, 1.0, "2026-10-11", 0, "Martin Campbell", "Daisy Ridley", "Action/Thriller"],
+  ["The Firemen's Ball", 1967, 2.0, "2026-10-12", 0, "Miloš Forman", "Jan Vostrčil", "Comedy"],
+  ["Verity", 2026, 2.0, "2026-10-12", 0, "Michael Showalter", "Anne Hathaway", "Thriller/Romance"],
+  ["Island of Lost Souls", 1932, 3.0, "2026-10-13", 0, "Erle C. Kenton", "Charles Laughton", "Horror/Sci-Fi"],
+  ["Digger", 2026, 3.5, "2026-10-14", 1, "Alejandro G. Iñárritu", "Tom Cruise", "Action/Thriller"],
+  ["Invasion of the Body Snatchers", 1978, 4.0, "2026-10-15", 0, "Philip Kaufman", "Donald Sutherland", "Horror/Sci-Fi"],
+  ["Evil Dead", 2013, 4.0, "2026-10-16", 0, "Fede Álvarez", "Jane Levy", "Horror"]
+]; // [título, año, nota, fecha vista, rewatch, director, protagonista, género] — diario 2026 (export 2026-10-17)
+const LAST_SYNC = SYNC.last_sync || '2026-10-25';
+</script>
+<script>
+/* PROFILE_DATA row: [name, year, userRating, genre, director, actor1, actor2, country] */
+/* CATALOG_DATA row: [name, year, genre, director, actor1, actor2, country, runtime, globalRating, hook] */
+
+const GENRE_GRADIENTS = {
+  "Horror": "linear-gradient(160deg,#3b0f14,#7c1f28)",
+  "Giallo": "linear-gradient(160deg,#3b0f14,#7c1f28)",
+  "Thriller": "linear-gradient(160deg,#14181f,#2c3446)",
+  "Noir": "linear-gradient(160deg,#14181f,#2c3446)",
+  "Mystery": "linear-gradient(160deg,#14181f,#2c3446)",
+  "Action": "linear-gradient(160deg,#2a1508,#7a3c12)",
+  "Adventure": "linear-gradient(160deg,#2a1508,#7a3c12)",
+  "Comedy": "linear-gradient(160deg,#2a230a,#8a6a1a)",
+  "Drama": "linear-gradient(160deg,#1c1712,#4a3a2a)",
+  "Romance": "linear-gradient(160deg,#2a1018,#7a2f45)",
+  "Sci-Fi": "linear-gradient(160deg,#0c1a1c,#1f4d52)",
+  "Animation": "linear-gradient(160deg,#142418,#2f6b45)",
+  "Family": "linear-gradient(160deg,#142418,#2f6b45)",
+  "Western": "linear-gradient(160deg,#241608,#6b4318)",
+  "Fantasy": "linear-gradient(160deg,#1a1228,#4a2f6b)",
+  "Musical": "linear-gradient(160deg,#241a08,#8a5a1a)",
+  "War": "linear-gradient(160deg,#1c1a12,#4a4530)",
+  "Sports": "linear-gradient(160deg,#1c1712,#4a3a2a)",
+  "Music": "linear-gradient(160deg,#241a08,#8a5a1a)",
+  "Documentary": "linear-gradient(160deg,#171717,#3a3a3a)",
+  "Biography": "linear-gradient(160deg,#1c1712,#4a3a2a)",
+  "History": "linear-gradient(160deg,#241608,#6b4318)"
+};
+function posterGradient(genreStr){
+  const first = genreStr.split('/')[0].trim();
+  return GENRE_GRADIENTS[first] || "linear-gradient(160deg,#1c1712,#4a3a2a)";
+}
+
+/* ---------------- Utilidades ---------------- */
+function filmKey(t, y){
+  return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim() + '|' + y;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function starStr(r){ return '★'.repeat(Math.floor(r)) + (r % 1 ? '½' : ''); }
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function fmtDate(iso){ const [y,m,d] = iso.split('-').map(Number); return d + ' ' + MESES[m-1] + ' ' + y; }
+
+/* ---------------- Tabs ---------------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------------- Profile analysis ---------------- */
+const TOTAL_WATCHED = BASE_TOTAL + EXTRA_WATCHED.length; // export (watched.csv) + películas nuevas del feed
+
+function buildProfile(){
+  const genres={}, directors={}, actors={}, countries={};
+  let ratingSum=0;
+  PROFILE_DATA.forEach(([name,year,rating,genre,director,a1,a2,country])=>{
+    genre.split('/').forEach(g=>{ g=g.trim(); genres[g]=(genres[g]||0)+1; });
+    if(director) directors[director]=(directors[director]||0)+1;
+    if(a1) actors[a1]=(actors[a1]||0)+1;
+    if(a2) actors[a2]=(actors[a2]||0)+1;
+    if(country) countries[country]=(countries[country]||0)+1;
+    ratingSum+=rating;
+  });
+
+  const topN=(obj,n)=>Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  const total=PROFILE_DATA.length;
+  const avgRating=(ratingSum/total).toFixed(2);
+
+  const topGenres=topN(genres,8);
+  const topDirectors=topN(directors,8);
+  const topActors=topN(actors,10);
+  const topCountries=topN(countries,8);
+  // las décadas salen del historial COMPLETO (export + nuevas del feed): solo hace falta el año
+  const decadeMap = {};
+  BASE_DECADES.forEach(([d,c])=>{ decadeMap[d]=(decadeMap[d]||0)+c; });
+  EXTRA_WATCHED.forEach(([t,y])=>{ const d=Math.floor(y/10)*10; decadeMap[d]=(decadeMap[d]||0)+1; });
+  const decadeEntries = Object.entries(decadeMap).map(([d,c])=>[Number(d),c]).sort((a,b)=>a[0]-b[0]);
+  const recent = EXTRA_WATCHED.slice().sort((a,b)=> b[3].localeCompare(a[3])).slice(0,10);
+
+  const maxGenre=topGenres[0][1];
+  const maxDecade=Math.max(...decadeEntries.map(d=>d[1]));
+  const maxDirector=topDirectors[0][1];
+
+  const barRows=(entries,max,unit)=>entries.map(([label,count])=>`
+    <div class="bar-row">
+      <div class="lbl">${label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(count/max*100).toFixed(0)}%"></div></div>
+      <div class="val">${count}</div>
+    </div>`).join('');
+
+  const decadeRows=decadeEntries.map(([dec,count])=>`
+    <div class="bar-row">
+      <div class="lbl">${dec}s</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(count/maxDecade*100).toFixed(0)}%"></div></div>
+      <div class="val">${count}</div>
+    </div>`).join('');
+
+  const usaShare = Math.round((countries['USA']||0)/total*100);
+  const nonUsaShare = 100-usaShare;
+  const topDecadeLabel = decadeEntries.slice().sort((a,b)=>b[1]-a[1])[0][0]+'s';
+
+  const html = `
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">${TOTAL_WATCHED}</div><div class="lbl">películas vistas en total (todo tu historial de Letterboxd)</div></div>
+      <div class="hero-stat"><div class="num">${avgRating}</div><div class="lbl">rating promedio en tus ${total} mejor valoradas (sobre 5)</div></div>
+      <div class="hero-stat"><div class="num">${topDecadeLabel}</div><div class="lbl">tu década más vista, contando las ${TOTAL_WATCHED} completas</div></div>
+      <div class="hero-stat"><div class="num">${nonUsaShare}%</div><div class="lbl">de tus ${total} mejor valoradas no son de EE.UU.</div></div>
+    </div>
+
+    <div class="stat-block">
+      <h2 class="section-title">Al día con Letterboxd</h2>
+      <p class="section-sub">Lo último que sumaste a tu diario y no estaba en el export (${EXTRA_WATCHED.length} películas nuevas, al ${fmtDate(LAST_SYNC)})</p>
+      <div class="chip-list">
+        ${recent.map(([t,y,r])=>`<span class="chip">${esc(t)} <b>${starStr(r)}</b></span>`).join('')}
+      </div>
+    </div>
+
+    <p class="section-sub" style="margin-bottom:30px;">El desglose de géneros, directores, elenco y país de abajo está construido sobre tus ${total} películas mejor valoradas (las que más dicen de tu gusto) — Letterboxd no exporta esos datos para las ${TOTAL_WATCHED} completas. El gráfico de décadas sí usa las ${TOTAL_WATCHED} completas, porque ahí solo hace falta el año.</p>
+
+    <div class="stat-block">
+      <h2 class="section-title">Tus géneros</h2>
+      <p class="section-sub">Contando todas las etiquetas de cada película (una peli puede sumar en varios géneros)</p>
+      ${barRows(topGenres,maxGenre)}
+      <p class="insight">El thriller y el terror aparecen todo el tiempo entre tus mejores notas (se nota la vena Hitchcock/giallo), y la acción pesa más de lo que uno esperaría. Pero el drama sigue siendo tu base más sólida.</p>
+    </div>
+
+    <div class="stat-block">
+      <h2 class="section-title">Tus directores de cabecera</h2>
+      <p class="section-sub">A quién le das el beneficio de la duda una y otra vez</p>
+      ${barRows(topDirectors,maxDirector)}
+      <p class="insight">Wilder y Spielberg empatan arriba, pero De Palma, Tarantino, Scorsese y Hitchcock casi forman un bloque solo: el thriller de autor es tu debilidad confesa.</p>
+    </div>
+
+    <div class="stat-block">
+      <h2 class="section-title">Actores que más se repiten</h2>
+      <div class="chip-list">
+        ${topActors.map(([a,c])=>`<span class="chip">${a} <b>×${c}</b></span>`).join('')}
+      </div>
+    </div>
+
+    <div class="stat-block">
+      <h2 class="section-title">Décadas más vistas</h2>
+      <p class="section-sub">Sobre tus ${TOTAL_WATCHED} películas vistas en total</p>
+      ${decadeRows}
+      <p class="insight">2010 y 2000 concentran casi la mitad de todo lo que has visto, pero hay presencia real en cada década desde 1900: tanto muy atento al estreno de la semana como con un pie firme en el cine clásico.</p>
+    </div>
+
+    <div class="stat-block">
+      <h2 class="section-title">Nacionalidades</h2>
+      <div class="chip-list">
+        ${topCountries.map(([c,n])=>`<span class="chip">${c} <b>${n}</b></span>`).join('')}
+      </div>
+      <p class="insight">Fuerte presencia francesa (Clouzot, Ozon, Rohmer, Triet) además del bloque hollywoodense — tu costado europeo psicológico es real, no solo de palabra.</p>
+    </div>
+  `;
+  document.getElementById('panel-perfil').innerHTML = html;
+}
+buildProfile();
+document.getElementById('syncNote').textContent = 'Historial sincronizado con tu perfil de Letterboxd (fmillag) al ' + fmtDate(LAST_SYNC) + '.';
+
+/* ---------------- Recommendation engine ---------------- */
+// el catálogo excluye todo lo que ya viste después del export
+const SEEN_KEYS = new Set(EXTRA_WATCHED.map(([t,y])=>filmKey(t,y)));
+const CATALOG_DATA = CATALOG_ALL.filter(r=>!SEEN_KEYS.has(filmKey(r[0],r[1])));
+const GENRE_ES = {
+  "acción":"Action","accion":"Action","accion pura":"Action",
+  "aventura":"Adventure","aventuras":"Adventure",
+  "comedia":"Comedy","comica":"Comedy","cómica":"Comedy","graciosa":"Comedy","divertida":"Comedy",
+  "crimen":"Crime","policial":"Crime","policiaca":"Crime","policiaco":"Crime","mafia":"Crime",
+  "drama":"Drama","dramatica":"Drama","dramática":"Drama",
+  "terror":"Horror","miedo":"Horror","horror":"Horror","de miedo":"Horror","zombie":"Horror","zombies":"Horror","zombis":"Horror","vampiro":"Horror","vampiros":"Horror","slasher":"Horror",
+  "misterio":"Mystery",
+  "romance":"Romance","romántica":"Romance","romantica":"Romance","amor":"Romance","romantico":"Romance","romántico":"Romance",
+  "ciencia ficción":"Sci-Fi","ciencia ficcion":"Sci-Fi","sci-fi":"Sci-Fi","espacial":"Sci-Fi","espacio":"Sci-Fi","futurista":"Sci-Fi",
+  "suspenso":"Thriller","thriller":"Thriller","intriga":"Thriller","tension":"Thriller","tensión":"Thriller",
+  "animación":"Animation","animacion":"Animation","animada":"Animation","dibujos animados":"Animation","dibujos":"Animation","anime":"Animation",
+  "familiar":"Family","niños":"Family","ninos":"Family","infantil":"Family",
+  "western":"Western","vaqueros":"Western","del oeste":"Western",
+  "fantasía":"Fantasy","fantasia":"Fantasy",
+  "musical":"Musical",
+  "guerra":"War","belica":"War","bélica":"War",
+  "noir":"Noir","cine negro":"Noir",
+  "documental":"Documentary","historia real":"Documentary","basada en hechos reales":"Documentary",
+  "giallo":"Giallo",
+  "deportiva":"Sports","deportes":"Sports","boxeo":"Sports",
+  "whodunnit":"Mystery","detective":"Mystery","investigacion":"Mystery","investigación":"Mystery","detectivesco":"Mystery","detectivesca":"Mystery","enigma":"Mystery","misteriosa":"Mystery",
+  "venganza":"Thriller","asesino en serie":"Thriller","psicopata":"Thriller","psicópata":"Thriller","conspiracion":"Thriller","conspiración":"Thriller","paranoia":"Thriller",
+  "distopia":"Sci-Fi","distopía":"Sci-Fi","extraterrestres":"Sci-Fi","alienigenas":"Sci-Fi","alienígenas":"Sci-Fi","robots":"Sci-Fi","viaje en el tiempo":"Sci-Fi","postapocaliptica":"Sci-Fi","postapocalíptica":"Sci-Fi","apocaliptica":"Sci-Fi","apocalíptica":"Sci-Fi",
+  "superheroes":"Action","superhéroes":"Action","artes marciales":"Action","atraco":"Crime","heist":"Crime","robo":"Crime",
+  "casa embrujada":"Horror","embrujada":"Horror","fantasma":"Horror","fantasmas":"Horror","poseida":"Horror","poseída":"Horror","monstruos":"Horror","gore":"Horror","sangrienta":"Horror","perturbadora":"Horror","macabra":"Horror",
+  "coming of age":"Drama","adolescencia":"Drama","mayoria de edad":"Drama",
+  "road movie":"Adventure","viaje por carretera":"Adventure",
+  "biopic":"Biography","biografia":"Biography","biografía":"Biography",
+  "adulterio":"Romance","infidelidad":"Romance","amor prohibido":"Romance",
+  "cine negro americano":"Noir"
+};
+const STOPWORDS = new Set(["quiero","ver","una","un","de","del","la","el","los","las","con","que","para","por","favor","pelicula","película","peli","busco","dame","recomienda","recomiendame","recomiéndame","algo","tipo","onda","como","y","o","sea","este","esta","en","sobre","me","gustaria","gustaría","porfa","porfavor","hoy","noche","cortita","corta","larga","clasica","clásica","moderna","reciente","protagonizada","protagonice","actua","actúa","sale","estelarizada"]);
+const GENRE_OPTIONS = ["Acción","Aventura","Animación","Comedia","Crimen","Drama","Fantasía","Terror","Misterio","Musical","Romance","Ciencia ficción","Thriller","Western","Noir","Documental"];
+
+function normalize(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+function buildRecsUI(){
+  const html = `
+    <h2 class="section-title">¿Qué se te antoja hoy?</h2>
+    <p class="section-sub">Escribe en lenguaje natural, o usa los filtros. Ej: "algo de acción con Bruce Willis" o "un giallo italiano cortito".</p>
+    <div class="search-row">
+      <input id="freeText" type="text" placeholder='"quiero ver una película de Bruce Willis de acción"'>
+      <button class="clear-btn" id="clearBtn" type="button" title="Limpiar búsqueda">Limpiar</button>
+      <button id="searchBtn">Buscar</button>
+    </div>
+    <div class="filters">
+      <div class="field">
+        <label>Género</label>
+        <select id="genreSelect">
+          <option value="">Cualquiera</option>
+          ${GENRE_OPTIONS.map(g=>`<option value="${g}">${g}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>Duración</label>
+        <select id="durationSelect">
+          <option value="">Cualquiera</option>
+          <option value="short">Corta (menos de 90 min)</option>
+          <option value="mid">Media (90–120 min)</option>
+          <option value="long">Larga (más de 120 min)</option>
+        </select>
+      </div>
+      <button class="apply" id="filterBtn">Ver recomendaciones</button>
+    </div>
+    <p class="helper-txt">${CATALOG_DATA.length} candidatas: tu watchlist de Letterboxd + un catálogo curado, todas sin ver por ti, ordenadas por rating global.</p>
+    <div class="results" id="resultsBox"></div>
+  `;
+  document.getElementById('panel-recs').innerHTML = html;
+
+  document.getElementById('searchBtn').addEventListener('click', runFreeTextSearch);
+  document.getElementById('freeText').addEventListener('keydown', e=>{ if(e.key==='Enter') runFreeTextSearch(); });
+  document.getElementById('filterBtn').addEventListener('click', runFilterSearch);
+  document.getElementById('clearBtn').addEventListener('click', ()=>{
+    document.getElementById('freeText').value='';
+    document.getElementById('genreSelect').value='';
+    document.getElementById('durationSelect').value='';
+    document.getElementById('freeText').focus();
+    document.getElementById('resultsBox').innerHTML='';
+  });
+}
+
+function matchDuration(rt, bucket){
+  if(!bucket) return true;
+  if(bucket==='short') return rt<90;
+  if(bucket==='mid') return rt>=90 && rt<=120;
+  if(bucket==='long') return rt>120;
+  return true;
+}
+
+function runFilterSearch(){
+  const genre = document.getElementById('genreSelect').value;
+  const duration = document.getElementById('durationSelect').value;
+  const genreToken = genre ? GENRE_ES[normalize(genre)] : null;
+
+  let results = CATALOG_DATA.filter(row=>{
+    const [,,g,,,,,,rt] = row;
+    const rt2 = row[7];
+    const genreOk = !genreToken || row[2].split('/').includes(genreToken);
+    const durOk = matchDuration(rt2, duration);
+    return genreOk && durOk;
+  });
+  results.sort((a,b)=>b[8]-a[8]);
+  renderResults(results.slice(0,5), `Género: ${genre||'cualquiera'} · Duración: ${duration ? document.getElementById('durationSelect').selectedOptions[0].text : 'cualquiera'}`);
+}
+
+function runFreeTextSearch(){
+  const raw = document.getElementById('freeText').value.trim();
+  if(!raw){ runFilterSearch(); return; }
+  const text = normalize(raw);
+  const textPadded = ' '+text+' '; // for whole-word matches
+
+  // detect genre keyword (longest phrase first, so "ciencia ficcion" wins over stray words)
+  let genreToken=null, genrePhraseUsed=null;
+  const genrePhrases = Object.keys(GENRE_ES).sort((a,b)=>b.length-a.length);
+  for(const es of genrePhrases){
+    if((' '+normalize(es)+' ').length>2 && textPadded.includes(' '+normalize(es)+' ')){
+      genreToken = GENRE_ES[es]; genrePhraseUsed = es; break;
+    }
+  }
+  // detect duration keyword
+  let durBucket=null;
+  if(/\bcort(?:[ao]|it[ao])\b|rapid[ao]|breve/.test(text)) durBucket='short';
+  if(/\blarg[ao]|extens[ao]|epica|épica/.test(text)) durBucket='long';
+
+  // detect era keyword
+  let eraFilter=null;
+  if(/clasic|antigua|vieja|viejit/.test(text)) eraFilter='old';
+  if(/modern|recient|nueva|estreno/.test(text)) eraFilter='new';
+
+  // detect person name (actor or director): try full-name match first, then surname-only
+  const names = new Set();
+  CATALOG_DATA.forEach(row=>{
+    [row[3],row[4],row[5]].forEach(n=>{ if(n) names.add(n); });
+  });
+  let personMatch=null;
+  for(const n of names){
+    if(textPadded.includes(' '+normalize(n)+' ')){ personMatch=n; break; }
+  }
+  if(!personMatch){
+    for(const n of names){
+      const parts = n.split(' ');
+      const surname = parts[parts.length-1];
+      if(surname.length>=4 && new RegExp('\\b'+normalize(surname)+'\\b').test(text)){ personMatch=n; break; }
+    }
+  }
+
+  // remaining free tokens, for a general relevance score (title/country/genre words the person typed)
+  const consumedWords = new Set();
+  if(genrePhraseUsed) normalize(genrePhraseUsed).split(' ').forEach(w=>consumedWords.add(w));
+  if(personMatch) normalize(personMatch).split(' ').forEach(w=>consumedWords.add(w));
+  const freeTokens = text.split(/[^a-z0-9]+/).filter(w=>w.length>=3 && !STOPWORDS.has(w) && !consumedWords.has(w));
+
+  function scoreRow(row){
+    const [name,year,genre,director,a1,a2,country] = row;
+    let score = 0;
+    if(personMatch && (director===personMatch || a1===personMatch || a2===personMatch)) score += 10;
+    if(genreToken && genre.split('/').includes(genreToken)) score += 6;
+    if(durBucket && matchDuration(row[7], durBucket)) score += 2;
+    if(eraFilter && (eraFilter==='old' ? year<1980 : year>=2015)) score += 2;
+    if(freeTokens.length){
+      const haystack = normalize([name,director,a1,a2,country,genre].join(' '));
+      freeTokens.forEach(tok=>{ if(haystack.includes(tok)) score += 3; });
+    }
+    return score;
+  }
+
+  let scored = CATALOG_DATA.map(row=>({row, score:scoreRow(row)}))
+    .filter(x=>x.score>0);
+
+  let usedFallback=false;
+  let results;
+  if(scored.length===0){
+    // truly nothing matched any signal — legitimately open-ended, so don't always
+    // hand back the exact same five: shuffle among the best-rated instead of a fixed sort
+    usedFallback=true;
+    const pool = CATALOG_DATA.slice().sort((a,b)=>b[8]-a[8]).slice(0,20);
+    for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+    results = pool.slice(0,5);
+  } else {
+    scored.sort((a,b)=> b.score-a.score || b.row[8]-a.row[8]);
+    results = scored.slice(0,5).map(x=>x.row);
+  }
+
+  const tagBits=[];
+  if(personMatch) tagBits.push(personMatch);
+  if(genreToken) tagBits.push(genreToken);
+  if(durBucket) tagBits.push(durBucket==='short'?'corta':'larga');
+  if(eraFilter) tagBits.push(eraFilter==='old'?'clásica':'reciente');
+  const tagLine = tagBits.length ? `Leí: ${tagBits.join(' + ')}` : 'Búsqueda abierta';
+  renderResults(results, tagLine + (usedFallback ? ' — no calzó con nada puntual, te dejo lo mejor valorado en general' : ''));
+}
+
+function renderResults(list, subtitle){
+  const box = document.getElementById('resultsBox');
+  if(list.length===0){
+    box.innerHTML = `<p class="empty-note">No encontré nada que calce. Prueba con otro género o afloja los filtros.</p>`;
+    return;
+  }
+  const head = `<div class="results-head"><h2 class="section-title">Tus 5 candidatas</h2><span>${subtitle}</span></div>`;
+  const cards = list.map(([name,year,genre,director,a1,a2,country,runtime,rating,hook])=>`
+    <div class="card">
+      <div class="poster" style="background:${posterGradient(genre)}">
+        <div class="ptitle">${name}</div>
+        <div class="pyear">${year}</div>
+      </div>
+      <div class="card-body">
+        <h3>${name} <span class="yr">(${year})</span></h3>
+        <div class="meta-line"><b>Dirección:</b> ${director}</div>
+        <div class="meta-line"><b>Elenco:</b> ${[a1,a2].filter(Boolean).join(', ')}</div>
+        <div class="meta-line"><b>Género:</b> ${genre} &nbsp;·&nbsp; <b>País:</b> ${country}</div>
+        <span class="rating-tag">★ ${rating.toFixed(1)}</span>
+        <span class="runtime-tag">${runtime} min</span>
+        <p class="hook">${hook}</p>
+      </div>
+    </div>`).join('');
+  box.innerHTML = head + cards;
+}
+
+buildRecsUI();
+
+/* ---------------- Octubre terror 26 ---------------- */
+// Vista = (aparece en tu diario de octubre 2026, export o feed) o (está en EXTRA_WATCHED con fecha de octubre 2026) o (la marcaste a mano).
+// Lo marcado a mano se guarda en este navegador.
+const TERROR_AUTO = (function(){
+  const m = Object.assign({}, TERROR_SEEN_DIARY);
+  EXTRA_WATCHED.concat(DIARY_FEED).forEach(([t,y,r,d])=>{ if(String(d).startsWith('2026-10')) m[filmKey(t,y)] = d; });
+  return m;
+})();
+let terrorOn = new Set(), terrorOff = new Set();   // marcas manuales: "vista" / "NO vista" (anula lo automático)
+let terrorPick = null, terrorDb = null, terrorSaveMsg = '';
+const TERROR_LS = 'salapropia-terror26';
+function terrorKey(row){ return filmKey(row[0], row[1]); }
+function terrorSeen(row){
+  const k = terrorKey(row);
+  if(terrorOn.has(k)) return true;
+  if(terrorOff.has(k)) return false;
+  return k in TERROR_AUTO;
+}
+function terrorPersist(){
+  const body = { on:[...terrorOn], off:[...terrorOff] };
+  try{ localStorage.setItem(TERROR_LS, JSON.stringify(body)); }catch(e){}
+  if(terrorDb){
+    terrorDb.doc('terror26/estado').set(body).then(()=>{ terrorSaveMsg=''; paintSaveMsg(); })
+      .catch(()=>{ terrorSaveMsg='No pude guardar en la nube; queda guardado solo en este navegador.'; paintSaveMsg(); });
+  }
+}
+function paintSaveMsg(){ const el=document.getElementById('trSave'); if(el) el.textContent = terrorSaveMsg; }
+function terrorToggle(row, seen){
+  const k = terrorKey(row);
+  terrorOn.delete(k); terrorOff.delete(k);
+  const auto = k in TERROR_AUTO;
+  if(seen && !auto) terrorOn.add(k);
+  if(!seen && auto) terrorOff.add(k);
+  terrorPersist();
+}
+function buildTerror(){
+  const total = TERROR_LIST.length;
+  const seenN = TERROR_LIST.filter(terrorSeen).length;
+  const left = total - seenN;
+  const pct = Math.round(seenN/total*100);
+  let pickHtml = '';
+  if(terrorPick){
+    const [name,year,url] = terrorPick;
+    pickHtml = `<div class="card">
+      <div class="poster" style="background:${posterGradient('Horror')}">
+        <div class="ptitle">${esc(name)}</div><div class="pyear">${year}</div>
+      </div>
+      <div class="card-body">
+        <h3>${esc(name)} <span class="yr">(${year})</span></h3>
+        <div class="meta-line">Te toca esta. Aún no la ves en octubre 2026.</div>
+        <div class="actions">
+          <button class="tr-btn ghost" id="trMark">Ya la vi ✓</button>
+          <button class="tr-btn ghost" id="trAgain">Otra distinta</button>
+          <a class="tr-btn ghost" style="text-decoration:none" href="${url}" target="_blank" rel="noopener">Ver en Letterboxd</a>
+        </div>
+      </div>
+    </div>`;
+  }
+  const drawBlock = left > 0
+    ? `<div class="tr-draw"><button class="tr-btn" id="trDraw">🎲 Sortear película</button></div><div class="tr-pick" id="trPick">${pickHtml}</div>`
+    : `<p class="insight">¡Lista completa! Viste las ${total} películas de Octubre terror.</p>`;
+  const rows = TERROR_LIST.map((row,i)=>{
+    const s = terrorSeen(row), k = terrorKey(row);
+    const d = s && TERROR_AUTO[k] ? fmtDate(TERROR_AUTO[k]) : (s ? 'marcada a mano' : '');
+    return `<label class="tr-row${s?' seen':''}"><input type="checkbox" data-i="${i}" ${s?'checked':''}>
+      <span class="t">${esc(row[0])} <span class="yr">(${row[1]})</span></span><span class="d">${d}</span></label>`;
+  }).join('');
+  document.getElementById('panel-terror').innerHTML = `
+    <div class="stat-block">
+      <h2 class="section-title">Octubre terror 26</h2>
+      <p class="section-sub">Tu lista de Letterboxd, con control de lo que ya viste este mes.</p>
+      <div class="tr-counter"><span class="big">${seenN}</span><span class="of">de ${total} vistas · <b style="color:var(--gold)">faltan ${left}</b></span></div>
+      <div class="tr-bar"><div style="width:${pct}%"></div></div>
+      ${drawBlock}
+    </div>
+    <div class="stat-block">
+      <h2 class="section-title">La lista completa</h2>
+      <p class="section-sub">Marca o desmarca a mano. Las que ya aparecen en tu diario de octubre salen marcadas solas.</p>
+      <div class="tr-list">${rows}</div>
+      <p class="tr-save" id="trSave">${esc(terrorSaveMsg)}</p>
+    </div>`;
+  const draw = document.getElementById('trDraw');
+  if(draw) draw.addEventListener('click', ()=>{
+    const pool = TERROR_LIST.filter(r=>!terrorSeen(r));
+    if(!pool.length) return;
+    // evita repetir la misma que acaba de salir, si hay otra opción
+    const opts = pool.length>1 && terrorPick ? pool.filter(r=>r[0]!==terrorPick[0]) : pool;
+    terrorPick = opts[Math.floor(Math.random()*opts.length)];
+    buildTerror();
+  });
+  const again = document.getElementById('trAgain');
+  if(again) again.addEventListener('click', ()=> document.getElementById('trDraw').click());
+  const mark = document.getElementById('trMark');
+  if(mark) mark.addEventListener('click', ()=>{ terrorToggle(terrorPick, true); terrorPick = null; buildTerror(); });
+  document.querySelectorAll('#panel-terror .tr-row input').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const row = TERROR_LIST[+cb.dataset.i];
+      terrorToggle(row, cb.checked);
+      if(terrorPick && terrorPick[0]===row[0] && cb.checked) terrorPick = null;
+      buildTerror();
+    });
+  });
+}
+function terrorLoadLocal(){
+  try{
+    const b = JSON.parse(localStorage.getItem(TERROR_LS) || 'null');
+    if(b){ terrorOn = new Set(b.on||[]); terrorOff = new Set(b.off||[]); }
+  }catch(e){}
+}
+terrorLoadLocal();
+buildTerror();
+
+/* ---------------- Películas 2026 (year in review) ---------------- */
+function buildYear2026(){
+  const Y = Y26.map(r=>({t:r[0],y:r[1],r:r[2],d:r[3],rw:r[4],dir:r[5],act:r[6],gen:r[7]}));
+  // visionados nuevos que trae la sincronización diaria y todavía no están en Y26; director/actor/género salen de PROFILE_DATA si la película está ahí
+  const have = new Set(Y.map(x=>filmKey(x.t,x.y)+'@'+x.d));
+  const prof = new Map(PROFILE_DATA.map(p=>[filmKey(p[0],p[1]), p]));
+  const feed = EXTRA_WATCHED.map(([t,yr,r,d])=>[t,yr,r,d,0]).concat(DIARY_FEED);
+  feed.forEach(([t,yr,r,d,rw])=>{
+    const k = filmKey(t,yr);
+    if(!String(d).startsWith('2026') || have.has(k+'@'+d)) return;
+    have.add(k+'@'+d);
+    const p = prof.get(k) || [];
+    Y.push({t,y:yr,r,d,rw:rw?1:0,dir:p[4]||'',act:p[5]||'',gen:p[3]||'',extra:true});
+  });
+  const uniq = new Map(); Y.forEach(x=>{ const k=filmKey(x.t,x.y); if(!uniq.has(k)) uniq.set(k,x); });
+  const films = [...uniq.values()];
+  const rated = Y.filter(x=>x.r!=null);
+  const avg = rated.length ? rated.reduce((a,x)=>a+x.r,0)/rated.length : 0;
+  const fives = [...new Map(Y.filter(x=>x.r===5).map(x=>[filmKey(x.t,x.y),x])).values()];
+  const rewatches = Y.filter(x=>x.rw).length;
+  const perMonth = Array(12).fill(0);
+  Y.forEach(x=>{ perMonth[+x.d.slice(5,7)-1]++; });
+  const maxM = Math.max(...perMonth);
+  const topM = perMonth.indexOf(maxM);
+  const lastMonth = Math.max(...Y.map(x=>+x.d.slice(5,7)));
+  const NM = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  function top5(field, split){
+    const c = new Map();
+    films.forEach(f=>{
+      const v = f[field]; if(!v) return;
+      (split ? v.split('/') : [v]).forEach(n=>{ n=n.trim(); if(n) c.set(n,(c.get(n)||0)+1); });
+    });
+    return [...c.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,5);
+  }
+  function bars(list, withTotal){
+    if(!list.length) return '<p class="empty-note">Sin datos</p>';
+    const mx = list[0][1];
+    return list.map(([n,c])=>`<div class="bar-row"><div class="lbl">${esc(n)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/mx*100)}%"></div></div><div class="val">${c}</div></div>`).join('');
+  }
+  const dirs = top5('dir'), acts = top5('act'), gens = top5('gen', true);
+  const cols = perMonth.map((n,i)=>`<div class="y-col${n===0?' zero':''}${n===maxM?' top':''}"><span class="n">${n||''}</span><div class="b" style="height:${maxM?Math.round(n/maxM*100):0}%"></div></div>`).join('');
+  const labels = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'].map(m=>`<span>${m}</span>`).join('');
+  const fiveChips = fives.sort((a,b)=>a.d.localeCompare(b.d)).map(f=>`<span class="chip">${esc(f.t)} <b>${f.y}</b></span>`).join('');
+  const best = rated.length ? Math.max(...rated.map(x=>x.r)) : 0;
+  document.getElementById('panel-year').innerHTML = `
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">${films.length}</div><div class="lbl">películas distintas vistas en 2026</div></div>
+      <div class="hero-stat"><div class="num">${Y.length}</div><div class="lbl">visionados, con ${rewatches} revisionados</div></div>
+      <div class="hero-stat"><div class="num">${avg.toFixed(2)}</div><div class="lbl">nota promedio que les pusiste</div></div>
+      <div class="hero-stat"><div class="num">${fives.length}</div><div class="lbl">películas de 5 estrellas</div></div>
+    </div>
+    <p class="insight">${NM[topM]} fue tu mes más cinéfilo, con ${maxM} visionados. ${dirs[0] ? `El director que más viste fue <b>${esc(dirs[0][0])}</b> (${dirs[0][1]} películas)` : ''}${gens[0] ? ` y el género que más se repitió, <b>${esc(gens[0][0])}</b>.` : '.'}</p>
+    <div class="stat-block">
+      <h2 class="section-title">Visionados por mes</h2>
+      <p class="section-sub">Cada película vista cuenta una vez por fecha de visionado${lastMonth<12 ? '; ' + NM[lastMonth-1].toLowerCase() + ' sigue en curso' : ''}.</p>
+      <div class="y-cols">${cols}</div>
+      <div class="y-labels">${labels}</div>
+    </div>
+    <div class="y-two stat-block">
+      <div><h2 class="section-title">Top 5 directores</h2><p class="section-sub">Por películas distintas</p>${bars(dirs)}</div>
+      <div><h2 class="section-title">Top 5 actores</h2><p class="section-sub">Por protagonista de cada película</p>${bars(acts)}</div>
+      <div><h2 class="section-title">Top 5 géneros</h2><p class="section-sub">Una película puede tener varios</p>${bars(gens)}</div>
+    </div>
+    <div class="stat-block">
+      <h2 class="section-title">Tus cinco estrellas de 2026</h2>
+      <p class="section-sub">${fives.length} películas con nota máxima, en orden de visionado.</p>
+      <div class="chip-list">${fiveChips || '<span class="empty-note">Aún no hay</span>'}</div>
+    </div>
+    <p class="sync-note">Directores, actores y géneros están enriquecidos a mano, así que pueden tener algún error; algunos documentales y películas poco conocidas quedaron sin director o actor y no cuentan en esos rankings. Los visionados nuevos que traiga la sincronización diaria suman al mes y a la nota, pero no a los rankings hasta que se enriquezcan.</p>`;
+}
+buildYear2026();
+</script>
+
+<script>
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body></html>
