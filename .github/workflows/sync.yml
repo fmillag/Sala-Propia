@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "0 9 * * *"   # todos los días, 06:00 hora de Chile/Argentina aprox.
   workflow_dispatch:       # botón "Run workflow" para sincronizar a mano
+  push:                    # y cada vez que cambia el script o este archivo
+    branches: [main]
+    paths: [sync_letterboxd.py, .github/workflows/sync.yml]
 
 permissions:
   contents: write
