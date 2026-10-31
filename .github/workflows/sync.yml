@@ -6,7 +6,7 @@ on:
   workflow_dispatch:       # botón "Run workflow" para sincronizar a mano
   push:                    # y cada vez que cambia el script o este archivo
     branches: [main]
-    paths: [sync_letterboxd.py, .github/workflows/sync.yml]
+    paths: [sync_letterboxd.py, posters.py, .github/workflows/sync.yml]
 
 permissions:
   contents: write
@@ -20,10 +20,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: python sync_letterboxd.py fmillag
+      - run: python posters.py   # carteles de Wikipedia para películas nuevas del catálogo
       - name: Commit si hubo cambios
         run: |
           git config user.name "sala-propia-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sync-data.js
+          git add sync-data.js posters.js
           git diff --cached --quiet || git commit -m "Sync Letterboxd $(date -u +%F)"
           git push

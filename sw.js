@@ -1,6 +1,6 @@
 // Primero la red (para ver siempre lo último que sincronizó el Action), y la copia guardada si no hay conexión.
-const CACHE = 'sala-propia-v1';
-const SHELL = ['./', 'index.html', 'sync-data.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
+const CACHE = 'sala-propia-v2';
+const SHELL = ['./', 'index.html', 'sync-data.js', 'posters.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

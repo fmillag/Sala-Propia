@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sala Propia">
 <script src="sync-data.js"></script>
+<script src="posters.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -309,6 +310,8 @@
     letter-spacing:0.14em;
     color:rgba(242,233,220,0.75);
   }
+  .poster{overflow:hidden;}
+  .poster .pimg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; max-width:none;}
   .card-body h3{
     font-family:"Bebas Neue", serif;
     font-size:24px;
@@ -430,7 +433,7 @@
   <section class="panel" id="panel-year"></section>
 
   <footer class="note">
-    Análisis basado en tus 300 películas mejor valoradas de Letterboxd (géneros, directores, elenco y país enriquecidos a mano). Las recomendaciones salen de tu watchlist más un catálogo curado, cruzados contra lo que ya viste. Los carteles son ilustrativos, no fotografías reales. <span id="syncNote"></span>
+    Análisis basado en tus 300 películas mejor valoradas de Letterboxd (géneros, directores, elenco y país enriquecidos a mano). Las recomendaciones salen de tu watchlist más un catálogo curado, cruzados contra lo que ya viste. Los carteles vienen de Wikipedia; cuando no hay, se muestra uno ilustrativo. <span id="syncNote"></span>
   </footer>
 </div>
 
@@ -703,6 +706,15 @@ const GENRE_GRADIENTS = {
 function posterGradient(genreStr){
   const first = genreStr.split('/')[0].trim();
   return GENRE_GRADIENTS[first] || "linear-gradient(160deg,#1c1712,#4a3a2a)";
+}
+// Cartel real de Wikipedia (posters.js) encima del ilustrado; si no hay o no carga, queda el ilustrado.
+function posterHtml(name, year, genre){
+  const src = (window.POSTERS || {})[filmKey(name, year)];
+  const img = src ? `<img class="pimg" src="${esc(src)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
+  return `<div class="poster" style="background:${posterGradient(genre)}">
+        <div class="ptitle">${esc(name)}</div>
+        <div class="pyear">${year}</div>${img}
+      </div>`;
 }
 
 /* ---------------- Utilidades ---------------- */
@@ -1043,10 +1055,7 @@ function renderResults(list, subtitle){
   const head = `<div class="results-head"><h2 class="section-title">Tus 5 candidatas</h2><span>${subtitle}</span></div>`;
   const cards = list.map(([name,year,genre,director,a1,a2,country,runtime,rating,hook])=>`
     <div class="card">
-      <div class="poster" style="background:${posterGradient(genre)}">
-        <div class="ptitle">${name}</div>
-        <div class="pyear">${year}</div>
-      </div>
+      ${posterHtml(name, year, genre)}
       <div class="card-body">
         <h3>${name} <span class="yr">(${year})</span></h3>
         <div class="meta-line"><b>Dirección:</b> ${director}</div>
@@ -1106,9 +1115,7 @@ function buildTerror(){
   if(terrorPick){
     const [name,year,url] = terrorPick;
     pickHtml = `<div class="card">
-      <div class="poster" style="background:${posterGradient('Horror')}">
-        <div class="ptitle">${esc(name)}</div><div class="pyear">${year}</div>
-      </div>
+      ${posterHtml(name, year, 'Horror')}
       <div class="card-body">
         <h3>${esc(name)} <span class="yr">(${year})</span></h3>
         <div class="meta-line">Te toca esta. Aún no la ves en octubre 2026.</div>
