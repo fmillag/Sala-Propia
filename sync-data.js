@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-09",
+ "last_sync": "2026-11-10",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
@@ -175,6 +175,13 @@ window.SYNC = {
    4.0,
    "2026-10-31",
    614934
+  ],
+  [
+   "Impractical Jokers: The Movie",
+   2020,
+   2.0,
+   "2026-11-06",
+   566927
   ]
  ],
  "diary": [
@@ -625,6 +632,14 @@ window.SYNC = {
    "2026-11-04",
    0,
    1593
+  ],
+  [
+   "Impractical Jokers: The Movie",
+   2020,
+   2.0,
+   "2026-11-06",
+   0,
+   566927
   ]
  ]
 };
