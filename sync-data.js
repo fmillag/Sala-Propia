@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-11",
+ "last_sync": "2026-11-12",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
