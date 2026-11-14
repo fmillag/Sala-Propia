@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-13",
+ "last_sync": "2026-11-14",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
@@ -189,6 +189,13 @@ window.SYNC = {
    4.0,
    "2026-11-10",
    791523
+  ],
+  [
+   "Sense and Sensibility",
+   2026,
+   3.5,
+   "2026-11-13",
+   1503762
   ]
  ],
  "diary": [
@@ -655,6 +662,22 @@ window.SYNC = {
    "2026-11-10",
    0,
    791523
+  ],
+  [
+   "Sense and Sensibility",
+   2026,
+   3.5,
+   "2026-11-13",
+   0,
+   1503762
+  ],
+  [
+   "The Godfather",
+   1972,
+   5.0,
+   "2026-11-13",
+   1,
+   238
   ]
  ]
 };
