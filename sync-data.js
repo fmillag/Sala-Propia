@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-14",
+ "last_sync": "2026-11-15",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
@@ -196,6 +196,13 @@ window.SYNC = {
    3.5,
    "2026-11-13",
    1503762
+  ],
+  [
+   "The Mummy: Tomb of the Dragon Emperor",
+   2008,
+   3.0,
+   "2026-11-14",
+   1735
   ]
  ],
  "diary": [
@@ -678,6 +685,14 @@ window.SYNC = {
    "2026-11-13",
    1,
    238
+  ],
+  [
+   "The Mummy: Tomb of the Dragon Emperor",
+   2008,
+   3.0,
+   "2026-11-14",
+   0,
+   1735
   ]
  ]
 };
