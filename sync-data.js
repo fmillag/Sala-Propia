@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-15",
+ "last_sync": "2026-11-16",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
@@ -203,6 +203,13 @@ window.SYNC = {
    3.0,
    "2026-11-14",
    1735
+  ],
+  [
+   "Guess Who's Coming to Dinner",
+   1967,
+   4.0,
+   "2026-11-15",
+   1879
   ]
  ],
  "diary": [
@@ -693,6 +700,14 @@ window.SYNC = {
    "2026-11-14",
    0,
    1735
+  ],
+  [
+   "Guess Who's Coming to Dinner",
+   1967,
+   4.0,
+   "2026-11-15",
+   0,
+   1879
   ]
  ]
 };
