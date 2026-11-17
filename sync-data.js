@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-16",
+ "last_sync": "2026-11-17",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
@@ -210,6 +210,13 @@ window.SYNC = {
    4.0,
    "2026-11-15",
    1879
+  ],
+  [
+   "Wild Horse Nine",
+   2026,
+   3.5,
+   "2026-11-16",
+   891621
   ]
  ],
  "diary": [
@@ -708,6 +715,14 @@ window.SYNC = {
    "2026-11-15",
    0,
    1879
+  ],
+  [
+   "Wild Horse Nine",
+   2026,
+   3.5,
+   "2026-11-16",
+   0,
+   891621
   ]
  ]
 };
