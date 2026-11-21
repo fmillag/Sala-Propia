@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-20",
+ "last_sync": "2026-11-21",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
@@ -723,6 +723,14 @@ window.SYNC = {
    "2026-11-16",
    0,
    891621
+  ],
+  [
+   "The Godfather Part II",
+   1974,
+   5.0,
+   "2026-11-20",
+   1,
+   240
   ]
  ]
 };
