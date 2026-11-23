@@ -1,5 +1,5 @@
 window.SYNC = {
- "last_sync": "2026-11-22",
+ "last_sync": "2026-11-23",
  "extra_watched": [
   [
    "Dua Lipa: Live from Mexico",
@@ -217,6 +217,13 @@ window.SYNC = {
    3.5,
    "2026-11-16",
    891621
+  ],
+  [
+   "In Cold Blood",
+   1967,
+   3.5,
+   "2026-11-22",
+   18900
   ]
  ],
  "diary": [
@@ -731,6 +738,14 @@ window.SYNC = {
    "2026-11-20",
    1,
    240
+  ],
+  [
+   "In Cold Blood",
+   1967,
+   3.5,
+   "2026-11-22",
+   0,
+   18900
   ]
  ]
 };
